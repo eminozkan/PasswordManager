@@ -9,6 +9,7 @@ import password.manager.business.results.PasswordOperationResults;
 import password.manager.persistence.PasswordRepo;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -45,6 +46,8 @@ public class PasswordService {
             return PasswordOperationResults.TITLE_IS_NULL;
         }else if(!isPasswordEmpty(pass)){
             return PasswordOperationResults.PASSWORD_EXISTS;
+        }else if(repo.isPasswordTitleExist(pass.getTitle())){
+            return PasswordOperationResults.TITLE_EXISTS;
         }
         pass.setId(UUID.randomUUID().toString());
         repo.save(pass);

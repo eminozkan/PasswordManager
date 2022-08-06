@@ -35,9 +35,14 @@ public class PasswordRepo implements PasswordRepository{
     }
 
     @Override
-    public Boolean isPasswordExists(String id){
-        return passwords.containsKey(id);
+    public Boolean isPasswordTitleExist(String title){
+        List<Password> passwordList = list();
+        for (Password pass : passwordList) {
+            if(pass.getTitle().equals(title)){
+                return true;
+            }
+        }
+        return false;
     }
-
 
 }
