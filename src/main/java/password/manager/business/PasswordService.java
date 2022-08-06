@@ -9,7 +9,6 @@ import password.manager.business.results.PasswordOperationResults;
 import password.manager.persistence.PasswordRepo;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 
