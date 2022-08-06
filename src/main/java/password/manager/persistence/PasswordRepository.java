@@ -18,5 +18,7 @@ public interface PasswordRepository {
 
     public Boolean isPasswordTitleExist(String title);
 
+    public Boolean isPasswordExists(String id);
+
 
 }

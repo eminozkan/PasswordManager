@@ -45,4 +45,9 @@ public class PasswordRepo implements PasswordRepository{
         return false;
     }
 
+    @Override
+    public Boolean isPasswordExists(String id){
+        return passwords.containsKey(id);
+    }
+
 }

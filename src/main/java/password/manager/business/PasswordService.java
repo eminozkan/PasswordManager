@@ -24,27 +24,21 @@ public class PasswordService {
         return ObjectUtils.isEmpty(pass.getTitle());
     }
 
-    private Boolean isPasswordEmpty(Password pass){
-        return ObjectUtils.isEmpty(pass);
-
-    }
 
     private List<Password> hidePasswordInf(List<Password> passwords){
         for(Password pass : passwords){
             int length = pass.getPassword().length();
+            StringBuffer sb = new StringBuffer();
             for(int i = 0; i < length;i++){
-                StringBuffer sb = new StringBuffer();
                 sb.append("*");
-                pass.setPassword(sb.toString());
             }
+            pass.setPassword(sb.toString());
         }
         return passwords;
     }
     public PasswordOperationResults savePassword(Password pass){
         if(isPasswordTitleEmpty(pass)){
             return PasswordOperationResults.TITLE_IS_NULL;
-        }else if(!isPasswordEmpty(pass)){
-            return PasswordOperationResults.PASSWORD_EXISTS;
         }else if(repo.isPasswordTitleExist(pass.getTitle())){
             return PasswordOperationResults.TITLE_EXISTS;
         }
@@ -61,7 +55,7 @@ public class PasswordService {
     }
 
     public PasswordOperationResults updatePassword(Password pass){
-        if(isPasswordEmpty(pass)){
+        if(!repo.isPasswordExists(pass.getId())){
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
         repo.save(pass);
@@ -69,7 +63,7 @@ public class PasswordService {
     }
 
     public PasswordOperationResults deletePassword(Password pass){
-        if(isPasswordEmpty(pass)){
+        if(!repo.isPasswordExists(pass.getId())){
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
         repo.deleteById(pass.getId());

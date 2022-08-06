@@ -30,8 +30,6 @@ public class PasswordController {
         PasswordOperationResults result = passwordService.savePassword(pass);
         if(result == PasswordOperationResults.TITLE_IS_NULL) {
             return new ResponseEntity<>("Title can't be null",HttpStatus.BAD_REQUEST);
-        }else if(result == PasswordOperationResults.PASSWORD_EXISTS){
-            return new ResponseEntity<>("Password exists",HttpStatus.BAD_REQUEST);
         }else if(result == PasswordOperationResults.TITLE_EXISTS) {
             return new ResponseEntity<>("Title is exists", HttpStatus.BAD_REQUEST);
         }else{
