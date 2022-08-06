@@ -6,9 +6,9 @@ import java.util.Map;
 
 public interface PasswordRepository {
 
-    public AddPasswordResults save(Map<String,Password> password);
+    public void save(Password password);
 
-    public void update();
+    public void update(Password password);
 
     public void deleteById(String id);
 
