@@ -2,9 +2,7 @@ package password.manager.persistence;
 
 import password.manager.business.password.Password;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PasswordRepo implements PasswordRepository{
     private Map<String, Password> passwords = new HashMap<>();
