@@ -1,8 +1,8 @@
 package password.manager.persistence;
 
-import java.util.HashMap;
+import password.manager.business.password.Password;
+
 import java.util.List;
-import java.util.Map;
 
 public interface PasswordRepository {
 

@@ -1,5 +1,7 @@
 package password.manager.persistence;
 
+import password.manager.business.password.Password;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

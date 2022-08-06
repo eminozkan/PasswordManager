@@ -1,4 +1,4 @@
-package password.manager.persistence;
+package password.manager.business.password;
 
 
 public class Password {
