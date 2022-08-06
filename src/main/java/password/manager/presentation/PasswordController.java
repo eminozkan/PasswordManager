@@ -24,7 +24,12 @@ public class PasswordController {
         return passwords;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{length}")
+    public String generatePassword(@PathVariable("length") int length){
+        return passwordService.generatePassword(length);
+    }
+
+    @GetMapping(value = "/{id}/")
     public ResponseEntity<String> getPasswordInf(@PathVariable("id") String id){
         Password pass = passwordService.getPasswordInfById(id);
         if(ObjectUtils.isEmpty(pass)){
