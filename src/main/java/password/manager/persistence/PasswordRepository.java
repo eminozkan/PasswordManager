@@ -1,11 +1,22 @@
 package password.manager.persistence;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface PasswordRepository {
-    public Map<String,Password> passwords = new HashMap<>();
+
+    public AddPasswordResults save(Map<String,Password> password);
+
+    public void update();
+
+    public void deleteById(String id);
+
+    public List<Password> list();
+
+    public Password findById(String id);
+
+    public Boolean isPasswordExists(String id);
+
 
 }
