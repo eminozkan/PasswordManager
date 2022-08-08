@@ -128,7 +128,7 @@ public class PasswordService {
 
 
     public PasswordOperationResults generatePassword(String id,Integer length){
-        if(repo.isPasswordExists(id)){
+        if(!repo.isPasswordExists(id)){
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
         Password pass = repo.findById(id);

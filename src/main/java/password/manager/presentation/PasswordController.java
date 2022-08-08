@@ -25,7 +25,7 @@ public class PasswordController {
     }
 
     @GetMapping(value = "/{length}")
-    public String generatePassword(@PathVariable("length") int length){
+    public String generatePassword(@PathVariable("length") Integer length){
         return passwordService.generatePassword(length);
     }
 
@@ -38,6 +38,29 @@ public class PasswordController {
         return new ResponseEntity(pass.getPassword(),HttpStatus.OK);
     }
 
+    @PatchMapping(value = "/{id}/{directoryName}/")
+    public ResponseEntity<String> changeDirectory(@PathVariable("id") String id, @PathVariable("directoryName") String directoryName){
+        PasswordOperationResults result;
+        if(directoryName.equals("-")){
+            result = passwordService.updateDirectoryInf(id,"no-folder");
+        }else {
+            result = passwordService.updateDirectoryInf(id, directoryName);
+        }
+        if(result == PasswordOperationResults.PASSWORD_NOT_EXISTS){
+            return new ResponseEntity<String>("Password not exists",HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<String>("Directory info changed successfully",HttpStatus.OK);
+    }
+
+    @PatchMapping(value = "/{id}/{length}")
+    public ResponseEntity<String> generatePassword(@PathVariable("id") String id,@PathVariable("length") Integer length){
+        PasswordOperationResults result = passwordService.generatePassword(id,length);
+        if(result == PasswordOperationResults.PASSWORD_NOT_EXISTS){
+            return new ResponseEntity<String>("Password not exists",HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<String>("Success",HttpStatus.OK);
+    }
 
 
     @PostMapping
