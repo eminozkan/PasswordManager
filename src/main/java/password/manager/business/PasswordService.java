@@ -117,17 +117,17 @@ public class PasswordService {
 
     public String generatePassword(Integer length){
         PasswordGenerator generator = new PasswordGenerator();
-        return generator.generatePassword(length);
+        return generator.generatePassword();
     }
 
 
-    public PasswordOperationResults generatePassword(String id,Integer length){
+    public PasswordOperationResults generatePassword(String id){
         if(!repo.isPasswordExists(id)){
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
         Password pass = repo.findById(id);
         PasswordGenerator generator = new PasswordGenerator();
-        pass.setPassword(generator.generatePassword(length));
+        pass.setPassword(generator.generatePassword());
         return PasswordOperationResults.SUCCESS;
 
     }

@@ -54,7 +54,7 @@ public class PasswordController {
 
     @PatchMapping(value = "/{id}/{length}")
     public ResponseEntity<String> generatePassword(@PathVariable("id") String id,@PathVariable("length") Integer length){
-        PasswordOperationResults result = passwordService.generatePassword(id,length);
+        PasswordOperationResults result = passwordService.generatePassword(id);
         if(result == PasswordOperationResults.PASSWORD_NOT_EXISTS){
             return new ResponseEntity<String>("Password not exists",HttpStatus.BAD_REQUEST);
         }
