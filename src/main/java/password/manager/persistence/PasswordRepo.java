@@ -2,9 +2,7 @@ package password.manager.persistence;
 
 import password.manager.business.password.Password;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PasswordRepo implements PasswordRepository{
     private Map<String, Password> passwords = new HashMap<>();
@@ -12,6 +10,11 @@ public class PasswordRepo implements PasswordRepository{
     @Override
     public void save(Password password){
         passwords.put(password.getId(),password);
+    }
+
+    @Override
+    public void changeDirectory(String id,String directoryName){
+        passwords.get(id).setDirectoryName(directoryName);
     }
 
     @Override
@@ -43,6 +46,11 @@ public class PasswordRepo implements PasswordRepository{
             }
         }
         return false;
+    }
+
+    @Override
+    public Boolean isPasswordExists(String id){
+        return passwords.containsKey(id);
     }
 
 }

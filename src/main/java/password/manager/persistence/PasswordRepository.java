@@ -10,6 +10,8 @@ public interface PasswordRepository {
 
     public void update(Password password);
 
+    public void changeDirectory(String id,String directoryName);
+
     public void deleteById(String id);
 
     public List<Password> list();
@@ -17,6 +19,8 @@ public interface PasswordRepository {
     public Password findById(String id);
 
     public Boolean isPasswordTitleExist(String title);
+
+    public Boolean isPasswordExists(String id);
 
 
 }

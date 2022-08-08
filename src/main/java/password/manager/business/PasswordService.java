@@ -8,8 +8,8 @@ import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
 import password.manager.persistence.PasswordRepo;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 
@@ -25,27 +25,12 @@ public class PasswordService {
         return ObjectUtils.isEmpty(pass.getTitle());
     }
 
-    private Boolean isPasswordEmpty(Password pass){
-        return ObjectUtils.isEmpty(pass);
-
-    }
-
-    private List<Password> hidePasswordInf(List<Password> passwords){
-        for(Password pass : passwords){
-            int length = pass.getPassword().length();
-            for(int i = 0; i < length;i++){
-                StringBuffer sb = new StringBuffer();
-                sb.append("*");
-                pass.setPassword(sb.toString());
-            }
-        }
-        return passwords;
+    private Boolean isNewPasswordTitleSameWithOld(Password oldPass,Password newPass){
+        return oldPass.getTitle().equals(newPass) ? true : false;
     }
     public PasswordOperationResults savePassword(Password pass){
         if(isPasswordTitleEmpty(pass)){
             return PasswordOperationResults.TITLE_IS_NULL;
-        }else if(!isPasswordEmpty(pass)){
-            return PasswordOperationResults.PASSWORD_EXISTS;
         }else if(repo.isPasswordTitleExist(pass.getTitle())){
             return PasswordOperationResults.TITLE_EXISTS;
         }
@@ -54,32 +39,71 @@ public class PasswordService {
         return PasswordOperationResults.SUCCESS;
     }
 
+    private Password copyPassword(Password dest,Password source){
+        dest.setId(source.getId());
+        dest.setTitle(source.getTitle());
+        dest.setUsername(source.getUsername());
+        dest.setPassword(source.getPassword());
+        dest.setUrl(source.getUrl());
+        dest.setNotes(source.getNotes());
 
+        return dest;
+    }
+    private List<Password> hidePasswordInfo(List<Password> passwordList){
+        List<Password> passwords = new ArrayList<>();
+        int index = 0;
+        for(Password p : passwordList){
+            StringBuffer stringBuffer = new StringBuffer();
+            for(int i = 0; i < p.getPassword().length(); i++){
+                stringBuffer.append("*");
+            }
+            Password pass = new Password();
+            pass = copyPassword(pass,p);
+            passwords.add(pass);
+            passwords.get(index).setPassword(stringBuffer.toString());
+            index++;
+        }
 
-    public List<Password> listPassword(){
-        List<Password> passwords =  hidePasswordInf(repo.list());
         return passwords;
     }
 
-    public PasswordOperationResults updatePassword(Password pass){
-        if(isPasswordEmpty(pass)){
+    public List<Password> listPassword(){
+        List<Password> passwords = repo.list();
+        return hidePasswordInfo(passwords);
+    }
+
+    private void setPasswordInf(Password oldPass,Password newPass){
+        oldPass.setTitle(newPass.getTitle());
+        oldPass.setPassword(newPass.getPassword());
+        oldPass.setUrl(newPass.getUrl());
+        oldPass.setNotes(newPass.getNotes());
+        oldPass.setUsername(newPass.getUsername());
+    }
+
+    public PasswordOperationResults updatePassword(Password newPass,String id){
+        if(!repo.isPasswordExists(id)){
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
-        repo.save(pass);
+        Password oldPass = repo.findById(id);
+        Boolean arePasswordsTitleSame = isNewPasswordTitleSameWithOld(oldPass,newPass);
+        if(!arePasswordsTitleSame && repo.isPasswordTitleExist(newPass.getTitle())){
+            return PasswordOperationResults.TITLE_EXISTS;
+        }
+        setPasswordInf(oldPass,newPass);
         return PasswordOperationResults.SUCCESS;
     }
 
-    public PasswordOperationResults deletePassword(Password pass){
-        if(isPasswordEmpty(pass)){
-            return PasswordOperationResults.PASSWORD_NOT_EXISTS;
-        }
-        repo.deleteById(pass.getId());
+    public PasswordOperationResults deletePassword(String id){
+        repo.deleteById(id);
         return PasswordOperationResults.SUCCESS;
     }
 
-    public String getPasswordInfById(String id){
+    public Password getPasswordInfById(String id){
+        if(!repo.isPasswordExists(id)){
+            return null;
+        }
         Password pass = repo.findById(id);
-        return pass.getPassword();
+        return pass;
     }
 
     public String generatePassword(Integer length){
