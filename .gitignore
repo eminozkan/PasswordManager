@@ -1,2 +1,5 @@
 #Ignore target file
 target
+
+#Ignore iml file
+password-manager.iml
