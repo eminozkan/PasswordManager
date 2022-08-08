@@ -47,6 +47,7 @@ public class PasswordService {
     private Password copyPassword(Password dest,Password source){
         dest.setId(source.getId());
         dest.setTitle(source.getTitle());
+        dest.setDirectoryName(source.getDirectoryName());
         dest.setUsername(source.getUsername());
         dest.setPassword(source.getPassword());
         dest.setUrl(source.getUrl());
@@ -123,6 +124,17 @@ public class PasswordService {
 
     public String generatePassword(Integer length){
         return Generator.generatePassword(length);
+    }
+
+
+    public PasswordOperationResults generatePassword(String id,Integer length){
+        if(repo.isPasswordExists(id)){
+            return PasswordOperationResults.PASSWORD_NOT_EXISTS;
+        }
+        Password pass = repo.findById(id);
+        pass.setPassword(Generator.generatePassword(length));
+        return PasswordOperationResults.SUCCESS;
+
     }
 
 
