@@ -8,6 +8,8 @@ public interface PasswordRepository {
 
     public void save(Password password);
 
+    public void changeDirectory(String id,String directoryName);
+
     public void update(Password password);
 
     public void deleteById(String id);
