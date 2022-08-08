@@ -24,7 +24,13 @@ public class PasswordController {
         return passwords;
     }
 
-    @GetMapping(value = "/{length}")
+    @GetMapping(value = "/")
+    public List<Password> listPasswordByDirectory(@RequestParam(required = false) String directoryName){
+        List<Password> passwords = passwordService.listPasswordByDirectory(directoryName);
+        return passwords;
+    }
+
+    @GetMapping("/{length}")
     public String generatePassword(@PathVariable("length") Integer length){
         return passwordService.generatePassword(length);
     }
