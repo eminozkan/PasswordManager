@@ -14,6 +14,8 @@ public interface PasswordRepository {
 
     public void deleteById(String id);
 
+    public List<Password> listByDirectory(String directoryName);
+
     public List<Password> list();
 
     public Password findById(String id);

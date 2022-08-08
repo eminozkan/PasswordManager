@@ -18,6 +18,20 @@ public class PasswordRepo implements PasswordRepository{
     }
 
     @Override
+    public List<Password> listByDirectory(String directoryName){
+        List<Password> passwordList = passwords.values().stream().toList();
+
+        List<Password> passwordsCategorizedByDirectory = new ArrayList<>();
+        for (Password pass : passwordList){
+            if(pass.getDirectoryName().equals(directoryName)){
+                passwordsCategorizedByDirectory.add(pass);
+            }
+        }
+
+        return passwordsCategorizedByDirectory;
+    }
+
+    @Override
     public void update(Password password){
         passwords.put(password.getId(),password);
     }
