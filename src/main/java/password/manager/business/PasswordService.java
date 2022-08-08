@@ -78,6 +78,11 @@ public class PasswordService {
         return hidePasswordInfo(passwords);
     }
 
+    public List<Password> listPasswordByDirectory(String directoryName){
+        List<Password> passwords = repo.listByDirectory(directoryName);
+        return hidePasswordInfo(passwords);
+    }
+
     private void setPasswordInf(Password oldPass,Password newPass){
         oldPass.setTitle(newPass.getTitle());
         oldPass.setDirectoryName(newPass.getDirectoryName());
