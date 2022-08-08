@@ -34,6 +34,11 @@ public class PasswordService {
         }else if(repo.isPasswordTitleExist(pass.getTitle())){
             return PasswordOperationResults.TITLE_EXISTS;
         }
+
+        if(ObjectUtils.isEmpty(pass.getDirectoryName())){
+            pass.setDirectoryName("no-folder");
+        }
+
         pass.setId(UUID.randomUUID().toString());
         repo.save(pass);
         return PasswordOperationResults.SUCCESS;
@@ -74,6 +79,7 @@ public class PasswordService {
 
     private void setPasswordInf(Password oldPass,Password newPass){
         oldPass.setTitle(newPass.getTitle());
+        oldPass.setDirectoryName(newPass.getDirectoryName());
         oldPass.setPassword(newPass.getPassword());
         oldPass.setUrl(newPass.getUrl());
         oldPass.setNotes(newPass.getNotes());
@@ -104,6 +110,15 @@ public class PasswordService {
         }
         Password pass = repo.findById(id);
         return pass;
+    }
+
+    public PasswordOperationResults updateDirectoryInf(String id,String directoryName){
+        if(!repo.isPasswordExists(id)){
+            return PasswordOperationResults.PASSWORD_NOT_EXISTS;
+        }
+
+        repo.changeDirectory(id,directoryName);
+        return PasswordOperationResults.SUCCESS;
     }
 
     public String generatePassword(Integer length){

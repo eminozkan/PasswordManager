@@ -16,6 +16,7 @@ public class PasswordRepo implements PasswordRepository{
     public void changeDirectory(String id,String directoryName){
         passwords.get(id).setDirectoryName(directoryName);
     }
+
     @Override
     public void update(Password password){
         passwords.put(password.getId(),password);
