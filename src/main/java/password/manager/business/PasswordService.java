@@ -3,7 +3,7 @@ package password.manager.business;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import password.manager.business.password.Generator;
+import password.manager.business.password.PasswordGenerator;
 import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
 import password.manager.persistence.PasswordRepo;
@@ -25,9 +25,6 @@ public class PasswordService {
         return ObjectUtils.isEmpty(pass.getTitle());
     }
 
-    private Boolean isNewPasswordTitleSameWithOld(Password oldPass,Password newPass){
-        return oldPass.getTitle().equals(newPass) ? true : false;
-    }
     public PasswordOperationResults savePassword(Password pass){
         if(isPasswordTitleEmpty(pass)){
             return PasswordOperationResults.TITLE_IS_NULL;
@@ -35,26 +32,11 @@ public class PasswordService {
             return PasswordOperationResults.TITLE_EXISTS;
         }
 
-        if(ObjectUtils.isEmpty(pass.getDirectoryName())){
-            pass.setDirectoryName("no-folder");
-        }
-
         pass.setId(UUID.randomUUID().toString());
         repo.save(pass);
         return PasswordOperationResults.SUCCESS;
     }
 
-    private Password copyPassword(Password dest,Password source){
-        dest.setId(source.getId());
-        dest.setTitle(source.getTitle());
-        dest.setDirectoryName(source.getDirectoryName());
-        dest.setUsername(source.getUsername());
-        dest.setPassword(source.getPassword());
-        dest.setUrl(source.getUrl());
-        dest.setNotes(source.getNotes());
-
-        return dest;
-    }
     private List<Password> hidePasswordInfo(List<Password> passwordList){
         List<Password> passwords = new ArrayList<>();
         int index = 0;
@@ -63,8 +45,7 @@ public class PasswordService {
             for(int i = 0; i < p.getPassword().length(); i++){
                 stringBuffer.append("*");
             }
-            Password pass = new Password();
-            pass = copyPassword(pass,p);
+            Password pass = new Password(p);
             passwords.add(pass);
             passwords.get(index).setPassword(stringBuffer.toString());
             index++;
@@ -79,11 +60,17 @@ public class PasswordService {
     }
 
     public List<Password> listPasswordByDirectory(String directoryName){
-        List<Password> passwords = repo.listByDirectory(directoryName);
-        return hidePasswordInfo(passwords);
+        List<Password> passwords = repo.list();
+        List<Password> filteredPasswords = new ArrayList<>();
+        for (Password pass : passwords){
+            if(pass.getDirectoryName().equals(directoryName)){
+                filteredPasswords.add(pass);
+            }
+        }
+        return hidePasswordInfo(filteredPasswords);
     }
 
-    private void setPasswordInf(Password oldPass,Password newPass){
+    private void replacePasswordFields(Password oldPass, Password newPass){
         oldPass.setTitle(newPass.getTitle());
         oldPass.setDirectoryName(newPass.getDirectoryName());
         oldPass.setPassword(newPass.getPassword());
@@ -97,11 +84,11 @@ public class PasswordService {
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
         Password oldPass = repo.findById(id);
-        Boolean arePasswordsTitleSame = isNewPasswordTitleSameWithOld(oldPass,newPass);
+        Boolean arePasswordsTitleSame =  oldPass.getTitle().equals(newPass.getTitle());
         if(!arePasswordsTitleSame && repo.isPasswordTitleExist(newPass.getTitle())){
             return PasswordOperationResults.TITLE_EXISTS;
         }
-        setPasswordInf(oldPass,newPass);
+        replacePasswordFields(oldPass,newPass);
         return PasswordOperationResults.SUCCESS;
     }
 
@@ -123,21 +110,24 @@ public class PasswordService {
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
 
-        repo.changeDirectory(id,directoryName);
+        Password pass = repo.findById(id);
+        pass.setDirectoryName(directoryName);
         return PasswordOperationResults.SUCCESS;
     }
 
     public String generatePassword(Integer length){
-        return Generator.generatePassword(length);
+        PasswordGenerator generator = new PasswordGenerator();
+        return generator.generatePassword();
     }
 
 
-    public PasswordOperationResults generatePassword(String id,Integer length){
+    public PasswordOperationResults generatePassword(String id){
         if(!repo.isPasswordExists(id)){
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
         Password pass = repo.findById(id);
-        pass.setPassword(Generator.generatePassword(length));
+        PasswordGenerator generator = new PasswordGenerator();
+        pass.setPassword(generator.generatePassword());
         return PasswordOperationResults.SUCCESS;
 
     }

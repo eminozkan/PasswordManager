@@ -11,6 +11,18 @@ public class Password {
     private String notes;
     private String url;
 
+    public Password(){}
+
+    public Password(Password pass){
+        this.id = pass.getId();
+        this.directoryName = pass.getDirectoryName();
+        this.title = pass.getTitle();
+        this.username = pass.getUsername();
+        this.password = pass.getPassword();
+        this.notes = pass.getNotes();
+        this.url = pass.getUrl();
+    }
+
     public String getDirectoryName() {
         return directoryName;
     }
