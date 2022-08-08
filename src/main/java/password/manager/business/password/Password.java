@@ -3,11 +3,21 @@ package password.manager.business.password;
 
 public class Password {
     private String id;
+
+    private String directoryName;
     private String title;
     private String username;
     private String password;
     private String notes;
     private String url;
+
+    public String getDirectoryName() {
+        return directoryName;
+    }
+
+    public void setDirectoryName(String directoryName) {
+        this.directoryName = directoryName;
+    }
 
     public String getId() {
         return id;
