@@ -115,8 +115,7 @@ public class PasswordService {
         return PasswordOperationResults.SUCCESS;
     }
 
-    public String generatePassword(Integer length){
-        PasswordGenerator generator = new PasswordGenerator();
+    public String generatePassword(PasswordGenerator generator){
         return generator.generatePassword();
     }
 
