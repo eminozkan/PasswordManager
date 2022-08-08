@@ -10,11 +10,7 @@ public interface PasswordRepository {
 
     public void update(Password password);
 
-    public void changeDirectory(String id,String directoryName);
-
     public void deleteById(String id);
-
-    public List<Password> listByDirectory(String directoryName);
 
     public List<Password> list();
 
