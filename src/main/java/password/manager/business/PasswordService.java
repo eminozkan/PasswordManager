@@ -1,7 +1,6 @@
 package password.manager.business;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import password.manager.business.password.PasswordGenerator;

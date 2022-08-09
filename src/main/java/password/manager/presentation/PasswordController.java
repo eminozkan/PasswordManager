@@ -2,16 +2,13 @@ package password.manager.presentation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import password.manager.business.PasswordService;
 import password.manager.business.password.Password;
-import password.manager.business.password.PasswordGenerator;
 import password.manager.business.results.PasswordOperationResults;
-import password.manager.persistence.PasswordRepo;
 
 import java.util.List;
 
@@ -31,31 +28,24 @@ public class PasswordController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<String> getPasswordInf(@PathVariable("id") String id){
+    public ResponseEntity<Password> getPasswordById(@PathVariable("id") String id,@RequestParam Boolean reveal){
         Password pass = passwordService.getPasswordInfById(id);
         if(ObjectUtils.isEmpty(pass)){
-            return new ResponseEntity("Password not exists",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity(pass.getPassword(),HttpStatus.OK);
+        return new ResponseEntity<>(pass,HttpStatus.OK);
     }
 
-    @PostMapping("/generate")
-    public ResponseEntity<String> generatePassword(@RequestBody PasswordGenerator generator){
-        String password = passwordService.generatePassword(generator);
-        return new ResponseEntity<String>(password, HttpStatus.OK);
-    }
 
     @PostMapping
-    public ResponseEntity<String> addPassword(@RequestBody Password pass){
+    public ResponseEntity<Password> addPassword(@RequestBody Password pass){
         PasswordOperationResults result = passwordService.savePassword(pass);
         if(result == PasswordOperationResults.TITLE_IS_NULL) {
-            return new ResponseEntity<>("Title can't be null",HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }else if(result == PasswordOperationResults.TITLE_EXISTS) {
-            return new ResponseEntity<>("Title is exists", HttpStatus.CONFLICT);
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }else{
-            String responseBody ="{ \"id\" : \"" + pass.getId() + "\"," +
-                    "\"title\" : \"" + pass.getTitle() + "\"}";
-            return new ResponseEntity<>(responseBody,HttpStatus.CREATED);
+            return new ResponseEntity<>(pass,HttpStatus.CREATED);
         }
     }
 
@@ -65,7 +55,7 @@ public class PasswordController {
     public ResponseEntity<String> updatePassword(@PathVariable("id") String id,@RequestBody Password pass){
         PasswordOperationResults result = passwordService.updatePassword(id,pass);
         if(result == PasswordOperationResults.PASSWORD_NOT_EXISTS){
-            return new ResponseEntity("Password not exists",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Password not exists",HttpStatus.NOT_FOUND);
         }else if(result == PasswordOperationResults.TITLE_EXISTS){
             return new ResponseEntity<>("Title is exists", HttpStatus.CONFLICT);
         }else{
@@ -73,22 +63,9 @@ public class PasswordController {
         }
     }
 
-    @PatchMapping(value = "/{id}/generate")
-    public ResponseEntity<String> generatePassword(@PathVariable("id") String id,@RequestBody PasswordGenerator generator){
-        PasswordOperationResults result = passwordService.generatePassword(id,generator);
-        if(result == PasswordOperationResults.PASSWORD_NOT_EXISTS){
-            return new ResponseEntity<String>("Password not exists",HttpStatus.NOT_FOUND);
-        }
-        Password pass = passwordService.getPasswordInfById(id);
-        String responseBody = "{ \"id\" : \"" + id + "\"," +
-                "\"password\" : \"" + pass.getPassword() + "\"}";
-        return new ResponseEntity<String>(responseBody,HttpStatus.OK);
-    }
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePassword(@PathVariable("id") String id){
-        PasswordOperationResults result = passwordService.deletePassword(id);
+        passwordService.deletePassword(id);
         return new ResponseEntity<>("Successfully deleted",HttpStatus.NO_CONTENT);
     }
 
