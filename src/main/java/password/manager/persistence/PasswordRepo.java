@@ -5,7 +5,7 @@ import password.manager.business.password.Password;
 import java.util.*;
 
 public class PasswordRepo implements PasswordRepository{
-    private Map<String, Password> passwords = new HashMap<>();
+    private final Map<String, Password> passwords = new HashMap<>();
 
     @Override
     public void save(Password password){
@@ -16,26 +16,7 @@ public class PasswordRepo implements PasswordRepository{
     public void changeDirectory(String id,String directoryName){
         passwords.get(id).setDirectoryName(directoryName);
     }
-
-    @Override
-    public List<Password> listByDirectory(String directoryName){
-        List<Password> passwordList = passwords.values().stream().toList();
-
-        List<Password> passwordsCategorizedByDirectory = new ArrayList<>();
-        for (Password pass : passwordList){
-            if(pass.getDirectoryName().equals(directoryName)){
-                passwordsCategorizedByDirectory.add(pass);
-            }
-        }
-
-        return passwordsCategorizedByDirectory;
-    }
-
-    @Override
-    public void update(Password password){
-        passwords.put(password.getId(),password);
-    }
-
+    
     @Override
     public void deleteById(String id){
         passwords.remove(id);
