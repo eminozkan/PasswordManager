@@ -1,6 +1,5 @@
 package password.manager.presentation;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +15,11 @@ import java.util.List;
 @RequestMapping("/api/passwords")
 @EnableAutoConfiguration
 public class PasswordController {
-    @Autowired
-    private PasswordService passwordService;
+    private final PasswordService passwordService;
+
+    public PasswordController(PasswordService passwordService) {
+        this.passwordService = passwordService;
+    }
 
     @GetMapping()
     public List<Password> listPassword(@RequestParam(required = false) String directoryName){
@@ -45,7 +47,7 @@ public class PasswordController {
         }else if(result == PasswordOperationResults.TITLE_EXISTS) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }else{
-            return new ResponseEntity<>(pass,HttpStatus.CREATED);
+            return new ResponseEntity<>(passwordService.getPasswordById(pass.getId(),false),HttpStatus.CREATED);
         }
     }
 

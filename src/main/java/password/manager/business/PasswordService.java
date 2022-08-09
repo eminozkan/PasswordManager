@@ -136,12 +136,13 @@ public class PasswordService {
         }
         Password pass = repo.findById(id);
         PasswordGenerator generator = new PasswordGenerator();
-        pass.setPassword(generator.generatePassword(password));
+        password = generator.generatePassword(password);
+        pass.setPassword(password.getPassword());
         return PasswordOperationResults.SUCCESS;
 
     }
 
-    public String generatePassword(GeneratedPassword password){
+    public GeneratedPassword generatePassword(GeneratedPassword password){
         PasswordGenerator generator = new PasswordGenerator();
         return generator.generatePassword(password);
     }

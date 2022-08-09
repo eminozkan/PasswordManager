@@ -14,7 +14,7 @@ public class PasswordGenerator {
 
 
 
-    public String generatePassword(GeneratedPassword password){
+    public GeneratedPassword generatePassword(GeneratedPassword password){
         String passwordChars = "";
         if(password.getHasNumericCharacters()){
             passwordChars+=NUMERIC_CHARACTERS;
@@ -41,7 +41,9 @@ public class PasswordGenerator {
             stringBuilder.append(passwordChars.charAt(random.nextInt(passwordChars.length())));
         }
 
-        return stringBuilder.toString();
+        password.setPassword(stringBuilder.toString());
+
+        return password;
 
     }
 }

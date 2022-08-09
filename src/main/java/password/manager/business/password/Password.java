@@ -3,7 +3,6 @@ package password.manager.business.password;
 
 public class Password {
     private String id;
-
     private String directoryName;
     private String title;
     private String username;
@@ -22,7 +21,7 @@ public class Password {
         this.notes = pass.getNotes();
         this.url = pass.getUrl();
     }
-
+    
     public String getDirectoryName() {
         return directoryName;
     }
