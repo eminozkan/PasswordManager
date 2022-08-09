@@ -1,5 +1,8 @@
 package password.manager.presentation;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
@@ -14,10 +17,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/passwords")
+@EnableAutoConfiguration
 public class PasswordController {
-    PasswordRepo repo = new PasswordRepo();
-
-    PasswordService passwordService = new PasswordService(repo);
+    @Autowired
+    private PasswordService passwordService;
 
     @GetMapping()
     public List<Password> listPassword(@RequestParam(required = false) String directoryName){
@@ -27,7 +30,7 @@ public class PasswordController {
         return passwordService.listPasswordByDirectory(directoryName);
     }
 
-    @GetMapping(value = "/{id}/")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<String> getPasswordInf(@PathVariable("id") String id){
         Password pass = passwordService.getPasswordInfById(id);
         if(ObjectUtils.isEmpty(pass)){
@@ -50,41 +53,36 @@ public class PasswordController {
         }else if(result == PasswordOperationResults.TITLE_EXISTS) {
             return new ResponseEntity<>("Title is exists", HttpStatus.CONFLICT);
         }else{
-            return new ResponseEntity<>(pass.getId(),HttpStatus.CREATED);
+            String responseBody ="{ \"id\" : \"" + pass.getId() + "\"," +
+                    "\"title\" : \"" + pass.getTitle() + "\"}";
+            return new ResponseEntity<>(responseBody,HttpStatus.CREATED);
         }
     }
 
 
 
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<String> updatePassword(@PathVariable("id") String id,@RequestBody Password pass){
-//        return new ResponseEntity<>("in-progress",HttpStatus.I_AM_A_TEAPOT);
-//    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> updatePassword(@PathVariable("id") String id,@RequestBody Password pass){
+        PasswordOperationResults result = passwordService.updatePassword(id,pass);
+        if(result == PasswordOperationResults.PASSWORD_NOT_EXISTS){
+            return new ResponseEntity("Password not exists",HttpStatus.NOT_FOUND);
+        }else if(result == PasswordOperationResults.TITLE_EXISTS){
+            return new ResponseEntity<>("Title is exists", HttpStatus.CONFLICT);
+        }else{
+            return new ResponseEntity<>("Password updated",HttpStatus.OK);
+        }
+    }
 
-    @PatchMapping(value = "/{id}/{length}")
-    public ResponseEntity<String> generatePassword(@PathVariable("id") String id,@PathVariable("length") Integer length){
-        PasswordOperationResults result = passwordService.generatePassword(id);
+    @PatchMapping(value = "/{id}/generate")
+    public ResponseEntity<String> generatePassword(@PathVariable("id") String id,@RequestBody PasswordGenerator generator){
+        PasswordOperationResults result = passwordService.generatePassword(id,generator);
         if(result == PasswordOperationResults.PASSWORD_NOT_EXISTS){
             return new ResponseEntity<String>("Password not exists",HttpStatus.NOT_FOUND);
         }
-
-        return new ResponseEntity<String>("Success",HttpStatus.OK);
-    }
-
-
-
-
-
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updatePassword(@RequestBody Password pass,@PathVariable("id") String id){
-        PasswordOperationResults result = passwordService.updatePassword(pass,id);
-        if(result == PasswordOperationResults.TITLE_EXISTS){
-            return new ResponseEntity<>("Title is used",HttpStatus.CONFLICT);
-        }else if(result == PasswordOperationResults.PASSWORD_NOT_EXISTS){
-            return new ResponseEntity<>("Password not exist",HttpStatus.NOT_FOUND);
-        }else{
-            return new ResponseEntity<>("Password information succesfully changed",HttpStatus.OK);
-        }
+        Password pass = passwordService.getPasswordInfById(id);
+        String responseBody = "{ \"id\" : \"" + id + "\"," +
+                "\"password\" : \"" + pass.getPassword() + "\"}";
+        return new ResponseEntity<String>(responseBody,HttpStatus.OK);
     }
 
 

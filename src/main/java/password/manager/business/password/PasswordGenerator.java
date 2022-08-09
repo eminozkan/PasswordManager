@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 
-@Service
 public class PasswordGenerator {
         private String CHARACTERS = "1234567890!@#$%&*()./AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
 

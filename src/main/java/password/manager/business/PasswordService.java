@@ -1,6 +1,7 @@
 package password.manager.business;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import password.manager.business.password.PasswordGenerator;
@@ -97,7 +98,7 @@ public class PasswordService {
         }
     }
 
-    public PasswordOperationResults updatePassword(Password newPass,String id){
+    public PasswordOperationResults updatePassword(String id,Password newPass){
         if(!repo.isPasswordExists(id)){
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
@@ -138,13 +139,12 @@ public class PasswordService {
     }
 
 
-    public PasswordOperationResults generatePassword(String id){
+    public PasswordOperationResults generatePassword(String id,PasswordGenerator passwordGenerator){
         if(!repo.isPasswordExists(id)){
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
         Password pass = repo.findById(id);
-        PasswordGenerator generator = new PasswordGenerator();
-        pass.setPassword(generator.generatePassword());
+        pass.setPassword(passwordGenerator.generatePassword());
         return PasswordOperationResults.SUCCESS;
 
     }
