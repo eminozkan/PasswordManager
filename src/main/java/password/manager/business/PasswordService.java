@@ -71,12 +71,30 @@ public class PasswordService {
     }
 
     private void replacePasswordFields(Password oldPass, Password newPass){
-        oldPass.setTitle(newPass.getTitle());
-        oldPass.setDirectoryName(newPass.getDirectoryName());
-        oldPass.setPassword(newPass.getPassword());
-        oldPass.setUrl(newPass.getUrl());
-        oldPass.setNotes(newPass.getNotes());
-        oldPass.setUsername(newPass.getUsername());
+
+        if(!ObjectUtils.isEmpty(newPass.getTitle())){
+            oldPass.setTitle(newPass.getTitle());
+        }
+
+        if(!ObjectUtils.isEmpty(newPass.getDirectoryName())){
+            oldPass.setDirectoryName(newPass.getDirectoryName());
+        }
+
+        if(!ObjectUtils.isEmpty(newPass.getUsername())){
+            oldPass.setUsername(newPass.getUsername());
+        }
+
+        if(!ObjectUtils.isEmpty(newPass.getPassword())){
+            oldPass.setPassword(newPass.getPassword());
+        }
+
+        if(!ObjectUtils.isEmpty(newPass.getNotes())){
+            oldPass.setNotes(newPass.getNotes());
+        }
+
+        if(!ObjectUtils.isEmpty(newPass.getUrl())){
+            oldPass.setUrl(newPass.getUrl());
+        }
     }
 
     public PasswordOperationResults updatePassword(Password newPass,String id){
