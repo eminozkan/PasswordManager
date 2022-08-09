@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/passwords")
-@EnableAutoConfiguration
 public class PasswordController {
     private final PasswordService passwordService;
 

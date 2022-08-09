@@ -1,9 +1,11 @@
 package password.manager.persistence;
 
+import org.springframework.stereotype.Repository;
 import password.manager.business.password.Password;
 
 import java.util.*;
 
+@Repository
 public class PasswordRepo implements PasswordRepository{
     private final Map<String, Password> passwords = new HashMap<>();
 
