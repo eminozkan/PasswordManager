@@ -1,24 +1,20 @@
 package password.manager.business.password;
 
-import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 
 public class PasswordGenerator {
-        private String CHARACTERS = "1234567890!@#$%&*()./AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
+        private static final String CHARACTERS = "1234567890!@#$%&*()./AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
 
-        public Integer length;
-
-
-        public String generatePassword(){
-            StringBuffer stringBuffer = new StringBuffer();
+        public String generatePassword(Integer length){
+            StringBuilder stringBuilder = new StringBuilder();
             SecureRandom rnd = new SecureRandom();
             for(int counter = 0; counter < length; counter++){
                 int index = rnd.nextInt(CHARACTERS.length());
-                stringBuffer.append(CHARACTERS.charAt(index));
+                stringBuilder.append(CHARACTERS.charAt(index));
             }
 
-            return stringBuffer.toString();
+            return stringBuilder.toString();
         }
 }
 

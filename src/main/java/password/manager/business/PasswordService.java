@@ -3,7 +3,6 @@ package password.manager.business;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import password.manager.business.password.PasswordGenerator;
 import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
 import password.manager.persistence.PasswordRepo;
@@ -15,7 +14,7 @@ import java.util.UUID;
 
 @Service
 public class PasswordService {
-    private PasswordRepo repo;
+    private final PasswordRepo repo;
 
     @Autowired
     public PasswordService(PasswordRepo repo){
@@ -41,17 +40,20 @@ public class PasswordService {
         List<Password> passwords = new ArrayList<>();
         int index = 0;
         for(Password p : passwordList){
-            StringBuffer stringBuffer = new StringBuffer();
-            for(int i = 0; i < p.getPassword().length(); i++){
-                stringBuffer.append("*");
-            }
+            String hiddenPassword = "*".repeat(p.getPassword().length());
             Password pass = new Password(p);
             passwords.add(pass);
-            passwords.get(index).setPassword(stringBuffer.toString());
+            passwords.get(index).setPassword(hiddenPassword);
             index++;
         }
 
         return passwords;
+    }
+
+    private Password hidePasswordInfo(Password pass){
+        Password password = new Password(pass);
+        password.setPassword("*".repeat(pass.getPassword().length()));
+        return password;
     }
 
     public List<Password> listPassword(){
@@ -102,7 +104,7 @@ public class PasswordService {
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
         Password oldPass = repo.findById(id);
-        Boolean arePasswordsTitleSame =  oldPass.getTitle().equals(newPass.getTitle());
+        boolean arePasswordsTitleSame =  oldPass.getTitle().equals(newPass.getTitle());
         if(!arePasswordsTitleSame && repo.isPasswordTitleExist(newPass.getTitle())){
             return PasswordOperationResults.TITLE_EXISTS;
         }
@@ -110,46 +112,20 @@ public class PasswordService {
         return PasswordOperationResults.SUCCESS;
     }
 
-    public PasswordOperationResults deletePassword(String id){
+    public void deletePassword(String id){
         repo.deleteById(id);
-        return PasswordOperationResults.SUCCESS;
     }
 
-    public Password getPasswordInfById(String id){
+    public Password getPasswordById(String id, Boolean reveal){
         if(!repo.isPasswordExists(id)){
             return null;
         }
-        Password pass = repo.findById(id);
-        return pass;
-    }
 
-    public PasswordOperationResults updateDirectoryInf(String id,String directoryName){
-        if(!repo.isPasswordExists(id)){
-            return PasswordOperationResults.PASSWORD_NOT_EXISTS;
+        if(reveal){
+            return new Password(repo.findById(id));
+        }else{
+            return new Password(hidePasswordInfo(repo.findById(id)));
         }
-
-        Password pass = repo.findById(id);
-        pass.setDirectoryName(directoryName);
-        return PasswordOperationResults.SUCCESS;
     }
-
-    public String generatePassword(PasswordGenerator generator){
-        return generator.generatePassword();
-    }
-
-
-    public PasswordOperationResults generatePassword(String id,PasswordGenerator passwordGenerator){
-        if(!repo.isPasswordExists(id)){
-            return PasswordOperationResults.PASSWORD_NOT_EXISTS;
-        }
-        Password pass = repo.findById(id);
-        pass.setPassword(passwordGenerator.generatePassword());
-        return PasswordOperationResults.SUCCESS;
-
-    }
-
-
-
-
 
 }
