@@ -1,6 +1,5 @@
 package password.manager.presentation;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +9,6 @@ import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
 
 @RestController
-@EnableAutoConfiguration
 @RequestMapping("/api/passwords/generate")
 public class PasswordGeneratorController {
     private final PasswordService passwordService;

@@ -1,6 +1,5 @@
 package password.manager.presentation;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
@@ -31,7 +30,7 @@ public class PasswordController {
     @GetMapping(value = "/{id}")
     public ResponseEntity<Password> getPasswordById(@PathVariable("id") String id,@RequestParam Boolean reveal){
         Password pass = passwordService.getPasswordById(id,reveal);
-        if(ObjectUtils.isEmpty(pass)){
+        if(pass == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(pass,HttpStatus.OK);
