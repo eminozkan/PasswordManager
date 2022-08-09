@@ -5,19 +5,13 @@ import password.manager.business.password.Password;
 import java.util.*;
 
 public class PasswordRepo implements PasswordRepository{
-    private Map<String, Password> passwords = new HashMap<>();
+    private final Map<String, Password> passwords = new HashMap<>();
 
     @Override
     public void save(Password password){
         passwords.put(password.getId(),password);
     }
 
-    @Override
-    public void update(Password password){
-        passwords.put(password.getId(),password);
-    }
-
-    @Override
     public void deleteById(String id){
         passwords.remove(id);
     }

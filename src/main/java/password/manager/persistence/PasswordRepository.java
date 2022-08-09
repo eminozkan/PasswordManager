@@ -6,19 +6,17 @@ import java.util.List;
 
 public interface PasswordRepository {
 
-    public void save(Password password);
+    void save(Password password);
 
-    public void update(Password password);
+    void deleteById(String id);
 
-    public void deleteById(String id);
+    List<Password> list();
 
-    public List<Password> list();
+    Password findById(String id);
 
-    public Password findById(String id);
+    Boolean isPasswordTitleExist(String title);
 
-    public Boolean isPasswordTitleExist(String title);
-
-    public Boolean isPasswordExists(String id);
+    Boolean isPasswordExists(String id);
 
 
 }
