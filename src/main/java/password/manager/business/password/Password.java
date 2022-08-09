@@ -21,7 +21,7 @@ public class Password {
         this.notes = pass.getNotes();
         this.url = pass.getUrl();
     }
-    
+
     public String getDirectoryName() {
         return directoryName;
     }
