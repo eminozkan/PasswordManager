@@ -2,6 +2,7 @@ package password.manager.presentation;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import password.manager.business.PasswordService;
 import password.manager.business.password.GeneratedPassword;
@@ -19,17 +20,23 @@ public class PasswordGeneratorController {
 
     @PostMapping
     public ResponseEntity<GeneratedPassword> generatePassword(@RequestBody GeneratedPassword password){
-        GeneratedPassword generatedPass = passwordService.generatePassword(password);
-        return new ResponseEntity<>(generatedPass, HttpStatus.OK);
+        if(ObjectUtils.isEmpty(password.getPasswordId())) {
+            GeneratedPassword generatedPass = passwordService.generatePassword(password);
+            return new ResponseEntity<>(generatedPass, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Password> generatePassword(@PathVariable("id") String id, @RequestBody GeneratedPassword generatedPassword){
-        PasswordOperationResults result = passwordService.generatePassword(id,generatedPassword);
+    @PatchMapping()
+    public ResponseEntity<Password> generatePasswordById(@RequestBody GeneratedPassword generatedPassword){
+        if(ObjectUtils.isEmpty(generatedPassword.getPasswordId())){
+            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+        }
+        PasswordOperationResults result = passwordService.generatePassword(generatedPassword.getPasswordId(),generatedPassword);
         if(result == PasswordOperationResults.PASSWORD_NOT_EXISTS){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Password pass = new Password(passwordService.getPasswordById(id,false));
+        Password pass = new Password(passwordService.getPasswordById(generatedPassword.getPasswordId(),false));
         return new ResponseEntity<>(pass,HttpStatus.OK);
 
     }
