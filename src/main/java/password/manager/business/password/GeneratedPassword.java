@@ -6,6 +6,8 @@ public class GeneratedPassword {
 
     private String password;
 
+    private String passwordId;
+
     private Boolean hasSpecialCharacters;
 
     private Boolean hasNumericCharacters;
@@ -24,6 +26,14 @@ public class GeneratedPassword {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getPasswordId() {
+        return passwordId;
+    }
+
+    public void setPasswordId(String passwordId) {
+        this.passwordId = passwordId;
     }
 
     public void setPassword(String password) {
