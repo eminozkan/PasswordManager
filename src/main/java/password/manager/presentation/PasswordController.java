@@ -28,9 +28,14 @@ public class PasswordController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Password> getPasswordById(@PathVariable("id") String id,@RequestParam Boolean reveal){
+
+    public ResponseEntity<Password> getPasswordById(@PathVariable("id") String id,@RequestParam(required = false) Boolean reveal){
+        if(reveal == null){
+            reveal =false;
+        }
         Password pass = passwordService.getPasswordById(id,reveal);
         if(pass == null){
+
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(pass,HttpStatus.OK);
