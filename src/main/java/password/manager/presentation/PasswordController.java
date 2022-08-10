@@ -28,9 +28,18 @@ public class PasswordController {
     }
 
     @GetMapping(value = "/{id}")
+<<<<<<< Updated upstream
     public ResponseEntity<Password> getPasswordById(@PathVariable("id") String id,@RequestParam Boolean reveal){
         Password pass = passwordService.getPasswordInfById(id);
         if(ObjectUtils.isEmpty(pass)){
+=======
+    public ResponseEntity<Password> getPasswordById(@PathVariable("id") String id,@RequestParam(required = false) Boolean reveal){
+        if(reveal == null){
+            reveal =false;
+        }
+        Password pass = passwordService.getPasswordById(id,reveal);
+        if(pass == null){
+>>>>>>> Stashed changes
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(pass,HttpStatus.OK);
