@@ -22,12 +22,9 @@ public class PasswordService {
     public PasswordService(PasswordRepo repo){
         this.repo = repo;
     }
-    private Boolean isPasswordTitleEmpty(Password pass){
-        return ObjectUtils.isEmpty(pass.getTitle());
-    }
 
     public PasswordOperationResults savePassword(Password pass){
-        if(isPasswordTitleEmpty(pass)){
+        if(ObjectUtils.isEmpty(pass.getTitle())){
             return PasswordOperationResults.TITLE_IS_NULL;
         }else if(repo.isPasswordTitleExist(pass.getTitle())){
             return PasswordOperationResults.TITLE_EXISTS;
