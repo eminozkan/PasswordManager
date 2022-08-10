@@ -8,13 +8,13 @@ public class GeneratedPassword {
 
     private String passwordId;
 
-    private Boolean hasSpecialCharacters;
+    private boolean hasSpecialCharacters;
 
-    private Boolean hasNumericCharacters;
+    private boolean hasNumericCharacters;
 
-    private Boolean hasUpperCaseCharacters;
+    private boolean hasUpperCaseCharacters;
 
-    private Boolean hasLowerCaseCharacters;
+    private boolean hasLowerCaseCharacters;
 
     public int getLength() {
         return length;
