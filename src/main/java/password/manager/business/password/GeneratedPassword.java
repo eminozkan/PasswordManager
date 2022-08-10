@@ -44,7 +44,7 @@ public class GeneratedPassword {
         return hasSpecialCharacters;
     }
 
-    public void setHasSpecialCharacters(Boolean hasSpecialCharacters) {
+    public void setHasSpecialCharacters(boolean hasSpecialCharacters) {
         this.hasSpecialCharacters = hasSpecialCharacters;
     }
 
@@ -52,7 +52,7 @@ public class GeneratedPassword {
         return hasNumericCharacters;
     }
 
-    public void setHasNumericCharacters(Boolean hasNumericCharacters) {
+    public void setHasNumericCharacters(boolean hasNumericCharacters) {
         this.hasNumericCharacters = hasNumericCharacters;
     }
 
@@ -60,7 +60,7 @@ public class GeneratedPassword {
         return hasUpperCaseCharacters;
     }
 
-    public void setHasUpperCaseCharacters(Boolean hasUpperCaseCharacters) {
+    public void setHasUpperCaseCharacters(boolean hasUpperCaseCharacters) {
         this.hasUpperCaseCharacters = hasUpperCaseCharacters;
     }
 
@@ -68,7 +68,7 @@ public class GeneratedPassword {
         return hasLowerCaseCharacters;
     }
 
-    public void setHasLowerCaseCharacters(Boolean hasLowerCaseCharacters) {
+    public void setHasLowerCaseCharacters(boolean hasLowerCaseCharacters) {
         this.hasLowerCaseCharacters = hasLowerCaseCharacters;
     }
 
