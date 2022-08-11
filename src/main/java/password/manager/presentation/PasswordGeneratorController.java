@@ -24,13 +24,13 @@ public class PasswordGeneratorController {
             GeneratedPassword generatedPass = passwordService.generatePassword(password);
             return new ResponseEntity<>(generatedPass, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @PatchMapping()
     public ResponseEntity<Password> generatePasswordById(@RequestBody GeneratedPassword generatedPassword){
         if(ObjectUtils.isEmpty(generatedPassword.getPasswordId())){
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         PasswordOperationResults result = passwordService.generatePassword(generatedPassword.getPasswordId(),generatedPassword);
         if(result == PasswordOperationResults.PASSWORD_NOT_EXISTS){
