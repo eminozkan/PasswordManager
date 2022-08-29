@@ -131,7 +131,7 @@ public class PasswordService {
         if(!repo.isPasswordExists(id)){
             return null;
         }
-            return new Password(hidePasswordInfo(repo.findById(id)));
+            return new Password(repo.findById(id));
     }
 
     public PasswordOperationResults generatePassword(String id, GeneratedPassword password){
