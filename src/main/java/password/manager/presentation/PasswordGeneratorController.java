@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
-import password.manager.business.PasswordService;
+import password.manager.business.DefaultPasswordService;
 import password.manager.business.password.GeneratedPassword;
 import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
@@ -12,9 +12,9 @@ import password.manager.business.results.PasswordOperationResults;
 @RestController
 @RequestMapping("/api/passwords/generate")
 public class PasswordGeneratorController {
-    private final PasswordService passwordService;
+    private final DefaultPasswordService passwordService;
 
-    public PasswordGeneratorController(PasswordService passwordService) {
+    public PasswordGeneratorController(DefaultPasswordService passwordService) {
         this.passwordService = passwordService;
     }
 
