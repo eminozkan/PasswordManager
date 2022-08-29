@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
-import password.manager.business.PasswordService;
+import password.manager.business.DefaultPasswordService;
 import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
 
@@ -13,9 +13,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/passwords")
 public class PasswordController {
-    private final PasswordService passwordService;
+    private final DefaultPasswordService passwordService;
 
-    public PasswordController(PasswordService passwordService) {
+    public PasswordController(DefaultPasswordService passwordService) {
         this.passwordService = passwordService;
     }
 

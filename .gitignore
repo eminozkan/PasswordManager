@@ -1,4 +1,6 @@
 #Ignore target file
 target
 
+.idea
+
 password-manager.iml
