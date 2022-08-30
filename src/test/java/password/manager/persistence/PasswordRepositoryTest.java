@@ -5,9 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import password.manager.business.password.Password;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 
@@ -15,7 +12,7 @@ class PasswordRepositoryTest {
 
     Password password = new Password();
 
-    InMemoryDb repository = new InMemoryDb();
+    PasswordRepository repository;
 
     @BeforeEach
     void setUp(){
@@ -28,6 +25,7 @@ class PasswordRepositoryTest {
                 .setNotes("notes")
                 .setUrl("url");
 
+        repository = new password.manager.persistence.InMemoryDb();
         repository.save(password);
 
     }
@@ -74,47 +72,4 @@ class PasswordRepositoryTest {
         assumeTrue(repository.isPasswordTitleExist(password.getTitle()));
     }
 
-
-
-
-
-    static class InMemoryDb implements PasswordRepository{
-        Map<String,Password> passwordList = new ConcurrentHashMap<>();
-
-        @Override
-        public void save(Password password) {
-            passwordList.put(password.getId(),password);
-        }
-
-        @Override
-        public void deleteById(String id) {
-            passwordList.remove(id);
-        }
-
-        @Override
-        public List<Password> list() {
-            return passwordList.values().stream().toList();
-        }
-
-        @Override
-        public Password findById(String id) {
-            return passwordList.get(id);
-        }
-
-        @Override
-        public Boolean isPasswordTitleExist(String title) {
-            List<Password> passwords = passwordList.values().stream().toList();
-            for (Password pass:passwords) {
-                if(pass.getTitle().equals(title)){
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public Boolean isPasswordExists(String id) {
-            return passwordList.containsKey(id);
-        }
-    }
 }
