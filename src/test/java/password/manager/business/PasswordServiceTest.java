@@ -24,8 +24,6 @@ class PasswordServiceTest {
 
     @Mock
     private PasswordRepository repository;
-
-
     private PasswordService passwordService;
     private Password password;
 
@@ -260,7 +258,7 @@ class PasswordServiceTest {
             pList = passwordService.listPasswordByDirectory("directory");
             assertNotNull(pList);
             pList = passwordService.listPasswordByDirectory("nullDirectory");
-            assertNull(pList);
+            assertTrue(pList.isEmpty());
         }
 
 
