@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import password.manager.business.password.GeneratedPassword;
 import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
 import password.manager.persistence.PasswordRepository;
@@ -104,6 +105,72 @@ class PasswordServiceTest {
         }
 
     }
+
+
+    @DisplayName("Delete Password")
+    @Test
+    void deletePassword(){
+        passwordService.savePassword(password);
+        passwordService.deletePassword(password.getId());
+
+        assertNull(repository.findById(password.getId()));
+    }
+
+    @Nested
+    class GetPassword{
+
+        @BeforeEach
+        void savePassword(){
+            passwordService.savePassword(password);
+        }
+        @DisplayName("Reveal true")
+        @Test
+        void revealTrue(){
+            Password fromService = passwordService.getPasswordById(password.getId(),true);
+            assertEquals(password.getPassword(),fromService.getPassword());
+        }
+
+        @DisplayName("Reveal false")
+        @Test
+        void revealFalse(){
+            Password fromService = passwordService.getPasswordById(password.getId(),false);
+            assertNotEquals(password.getPassword(),fromService.getPassword());
+            assertEquals(password.getPassword().length(),fromService.getPassword().length());
+        }
+    }
+
+
+    @Nested
+    class GeneratePassword{
+        private GeneratedPassword generatedPassword;
+        @BeforeEach
+        void setUp(){
+            generatedPassword = new GeneratedPassword()
+                    .setHasLowerCaseCharacters(true)
+                    .setHasNumericCharacters(true)
+                    .setHasSpecialCharacters(true)
+                    .setHasUpperCaseCharacters(true);
+        }
+
+        @Test
+        @DisplayName("No id")
+        void noId(){
+            passwordService.generatePassword(generatedPassword);
+            assertNotNull(generatedPassword.getPassword());
+        }
+
+
+        @Test
+        @DisplayName("With id")
+        void withId(){
+            passwordService.savePassword(password);
+            passwordService.generatePassword(password.getId(),generatedPassword);
+            assertNotNull(password.getPassword());
+            assertEquals(password.getPassword(),generatedPassword.getPassword());
+        }
+
+    }
+
 
     static class Repository implements PasswordRepository {
         Map<String, Password> passwordList = new ConcurrentHashMap<>();

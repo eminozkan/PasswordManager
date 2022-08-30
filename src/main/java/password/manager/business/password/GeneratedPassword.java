@@ -20,56 +20,62 @@ public class GeneratedPassword {
         return length;
     }
 
-    public void setLength(int length) {
+    public GeneratedPassword setLength(int length) {
         this.length = length;
+        return this;
     }
 
     public String getPassword() {
         return password;
     }
 
+    public GeneratedPassword setPassword(String password) {
+        this.password = password;
+        return this;
+    }
+
     public String getPasswordId() {
         return passwordId;
     }
 
-    public void setPasswordId(String passwordId) {
+    public GeneratedPassword setPasswordId(String passwordId) {
         this.passwordId = passwordId;
+        return this;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Boolean getHasSpecialCharacters() {
+    public boolean getHasSpecialCharacters() {
         return hasSpecialCharacters;
     }
 
-    public void setHasSpecialCharacters(boolean hasSpecialCharacters) {
+    public GeneratedPassword setHasSpecialCharacters(boolean hasSpecialCharacters) {
         this.hasSpecialCharacters = hasSpecialCharacters;
+        return this;
     }
 
-    public Boolean getHasNumericCharacters() {
+    public boolean getHasNumericCharacters() {
         return hasNumericCharacters;
     }
 
-    public void setHasNumericCharacters(boolean hasNumericCharacters) {
+    public GeneratedPassword setHasNumericCharacters(boolean hasNumericCharacters) {
         this.hasNumericCharacters = hasNumericCharacters;
+        return this;
     }
 
-    public Boolean getHasUpperCaseCharacters() {
+    public boolean getHasUpperCaseCharacters() {
         return hasUpperCaseCharacters;
     }
 
-    public void setHasUpperCaseCharacters(boolean hasUpperCaseCharacters) {
+    public GeneratedPassword setHasUpperCaseCharacters(boolean hasUpperCaseCharacters) {
         this.hasUpperCaseCharacters = hasUpperCaseCharacters;
+        return this;
     }
 
-    public Boolean getHasLowerCaseCharacters() {
+    public boolean getHasLowerCaseCharacters() {
         return hasLowerCaseCharacters;
     }
 
-    public void setHasLowerCaseCharacters(boolean hasLowerCaseCharacters) {
+    public GeneratedPassword setHasLowerCaseCharacters(boolean hasLowerCaseCharacters) {
         this.hasLowerCaseCharacters = hasLowerCaseCharacters;
+        return this;
     }
-
 }

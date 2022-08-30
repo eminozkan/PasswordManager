@@ -145,6 +145,7 @@ public class DefaultPasswordService implements PasswordService {
 
     }
 
+    @Override
     public GeneratedPassword generatePassword(GeneratedPassword password){
         PasswordGenerator generator = new PasswordGenerator();
         return generator.generatePassword(password);

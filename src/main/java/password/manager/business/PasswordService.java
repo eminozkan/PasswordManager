@@ -20,4 +20,6 @@ public interface PasswordService {
     Password getPasswordById(String id, Boolean reveal);
 
     PasswordOperationResults generatePassword(String id, GeneratedPassword password);
+
+    public GeneratedPassword generatePassword(GeneratedPassword password);
 }
