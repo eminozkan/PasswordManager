@@ -6,7 +6,7 @@ import password.manager.business.password.Password;
 import java.util.*;
 
 @Repository
-public class PasswordRepo implements PasswordRepository{
+public class InMemoryDb implements PasswordRepository{
     private final Map<String, Password> passwords = new HashMap<>();
 
     @Override

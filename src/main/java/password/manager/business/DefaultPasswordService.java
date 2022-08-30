@@ -7,7 +7,7 @@ import password.manager.business.password.GeneratedPassword;
 import password.manager.business.password.Password;
 import password.manager.business.password.PasswordGenerator;
 import password.manager.business.results.PasswordOperationResults;
-import password.manager.persistence.PasswordRepo;
+import password.manager.persistence.InMemoryDb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,10 @@ import java.util.UUID;
 
 @Service
 public class DefaultPasswordService implements PasswordService {
-    private final PasswordRepo repo;
+    private final InMemoryDb repo;
 
     @Autowired
-    public DefaultPasswordService(PasswordRepo repo){
+    public DefaultPasswordService(InMemoryDb repo){
         this.repo = repo;
     }
 
