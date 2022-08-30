@@ -1,13 +1,12 @@
 package password.manager.business;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import password.manager.business.password.GeneratedPassword;
 import password.manager.business.password.Password;
 import password.manager.business.password.PasswordGenerator;
 import password.manager.business.results.PasswordOperationResults;
-import password.manager.persistence.InMemoryDb;
+import password.manager.persistence.PasswordRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +15,10 @@ import java.util.UUID;
 
 @Service
 public class DefaultPasswordService implements PasswordService {
-    private final InMemoryDb repo;
+    private final PasswordRepository repo;
 
-    @Autowired
-    public DefaultPasswordService(InMemoryDb repo){
+
+    public DefaultPasswordService(PasswordRepository repo){
         this.repo = repo;
     }
 
