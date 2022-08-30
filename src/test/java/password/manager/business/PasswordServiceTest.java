@@ -23,7 +23,7 @@ class PasswordServiceTest {
 
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         password = new Password()
                 .setTitle("title")
                 .setDirectoryName("directory")
@@ -31,7 +31,7 @@ class PasswordServiceTest {
                 .setPassword("password")
                 .setNotes("notes")
                 .setUrl("url");
-        repository = new InMemoryDb();
+        repository = new Repository();
         passwordService = new DefaultPasswordService(repository);
     }
 
@@ -63,17 +63,17 @@ class PasswordServiceTest {
 
 
     @Nested
-    class UpdatePassword{
+    class UpdatePassword {
 
         @DisplayName("Non-saved password")
         @Test
-        void nonSavedPassword(){
-            assertEquals(PasswordOperationResults.PASSWORD_NOT_EXISTS, passwordService.updatePassword("id",password));
+        void nonSavedPassword() {
+            assertEquals(PasswordOperationResults.PASSWORD_NOT_EXISTS, passwordService.updatePassword("id", password));
         }
 
         @DisplayName("Non-unique title")
         @Test
-        void nonUnique(){
+        void nonUnique() {
             passwordService.savePassword(password);
 
             Password newPass = new Password(password);
@@ -81,21 +81,21 @@ class PasswordServiceTest {
             passwordService.savePassword(newPass);
 
             Password nonUniquePassword = new Password(password);
-            assertEquals(PasswordOperationResults.TITLE_EXISTS, passwordService.updatePassword(newPass.getId(),nonUniquePassword));
+            assertEquals(PasswordOperationResults.TITLE_EXISTS, passwordService.updatePassword(newPass.getId(), nonUniquePassword));
         }
 
         @DisplayName("Success")
         @Test
-        void success(){
+        void success() {
             passwordService.savePassword(password);
-            password
+            Password newPass = new Password()
                     .setTitle("new-title")
                     .setDirectoryName("new-directory")
                     .setUsername("new-username")
                     .setPassword("new-password")
                     .setNotes("new-note")
                     .setUrl("new-url");
-            assertEquals(PasswordOperationResults.SUCCESS, passwordService.updatePassword(password.getId(),password));
+            assertEquals(PasswordOperationResults.SUCCESS, passwordService.updatePassword(password.getId(),newPass));
 
             Password fromDb = repository.findById(password.getId());
             assumeTrue(password.equals(fromDb));
@@ -105,12 +105,12 @@ class PasswordServiceTest {
 
     }
 
-    static class InMemoryDb implements PasswordRepository {
+    static class Repository implements PasswordRepository {
         Map<String, Password> passwordList = new ConcurrentHashMap<>();
 
         @Override
         public void save(Password password) {
-            passwordList.put(password.getId(),password);
+            passwordList.put(password.getId(), password);
         }
 
         @Override
@@ -131,8 +131,8 @@ class PasswordServiceTest {
         @Override
         public Boolean isPasswordTitleExist(String title) {
             List<Password> passwords = passwordList.values().stream().toList();
-            for (Password pass:passwords) {
-                if(pass.getTitle().equals(title)){
+            for (Password pass : passwords) {
+                if (pass.getTitle().equals(title)) {
                     return true;
                 }
             }
