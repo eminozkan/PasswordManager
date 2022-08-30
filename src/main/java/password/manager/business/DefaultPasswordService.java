@@ -70,6 +70,9 @@ public class DefaultPasswordService implements PasswordService {
                 filteredPasswords.add(pass);
             }
         }
+        if(filteredPasswords.isEmpty()){
+            return null;
+        }
         return hidePasswordInfo(filteredPasswords);
     }
 

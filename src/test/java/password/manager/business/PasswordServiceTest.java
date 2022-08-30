@@ -4,27 +4,35 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import password.manager.business.password.GeneratedPassword;
 import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
 import password.manager.persistence.PasswordRepository;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 
+@ExtendWith(MockitoExtension.class)
 class PasswordServiceTest {
 
+    @Mock
     private PasswordRepository repository;
+
+
     private PasswordService passwordService;
     private Password password;
 
 
     @BeforeEach
     void setUp() {
+        passwordService = new DefaultPasswordService(repository);
         password = new Password()
                 .setTitle("title")
                 .setDirectoryName("directory")
@@ -32,8 +40,6 @@ class PasswordServiceTest {
                 .setPassword("password")
                 .setNotes("notes")
                 .setUrl("url");
-        repository = new Repository();
-        passwordService = new DefaultPasswordService(repository);
     }
 
     @Nested
@@ -43,20 +49,26 @@ class PasswordServiceTest {
         @Test
         void noTitle() {
             password.setTitle("");
+            passwordService.savePassword(password);
             assertEquals(PasswordOperationResults.TITLE_IS_NULL, passwordService.savePassword(password));
         }
 
         @DisplayName("Non-unique Title")
         @Test
         void nonUniqueTitle() {
-            passwordService.savePassword(password);
-            Password nonUniquePassword = new Password(password);
-            assertEquals(PasswordOperationResults.TITLE_EXISTS, passwordService.savePassword(nonUniquePassword));
+            Mockito.doReturn(true)
+                    .when(repository)
+                    .isPasswordTitleExist(password.getTitle());
+
+            assertEquals(PasswordOperationResults.TITLE_EXISTS, passwordService.savePassword(password));
         }
 
         @DisplayName("Success")
         @Test
         void success() {
+            Mockito.doNothing()
+                    .when(repository)
+                    .save(password);
             assertEquals(PasswordOperationResults.SUCCESS, passwordService.savePassword(password));
             assertNotNull(password.getId());
         }
@@ -69,39 +81,52 @@ class PasswordServiceTest {
         @DisplayName("Non-saved password")
         @Test
         void nonSavedPassword() {
+            Mockito.doReturn(false)
+                    .when(repository)
+                    .isPasswordExists("id");
+
             assertEquals(PasswordOperationResults.PASSWORD_NOT_EXISTS, passwordService.updatePassword("id", password));
         }
 
         @DisplayName("Non-unique title")
         @Test
         void nonUnique() {
-            passwordService.savePassword(password);
+
+            Mockito.doReturn(true)
+                    .when(repository)
+                    .isPasswordExists("id");
+
+            Mockito.doReturn(password)
+                    .when(repository)
+                    .findById("id");
+
+            Mockito.doReturn(true)
+                    .when(repository)
+                    .isPasswordTitleExist("non-unique-title");
+
 
             Password newPass = new Password(password);
-            newPass.setTitle("unique-title");
-            passwordService.savePassword(newPass);
+            newPass.setTitle("non-unique-title");
 
-            Password nonUniquePassword = new Password(password);
-            assertEquals(PasswordOperationResults.TITLE_EXISTS, passwordService.updatePassword(newPass.getId(), nonUniquePassword));
+            assertEquals(PasswordOperationResults.TITLE_EXISTS, passwordService.updatePassword("id", newPass));
         }
 
         @DisplayName("Success")
         @Test
         void success() {
-            passwordService.savePassword(password);
-            Password newPass = new Password()
-                    .setTitle("new-title")
-                    .setDirectoryName("new-directory")
-                    .setUsername("new-username")
-                    .setPassword("new-password")
-                    .setNotes("new-note")
-                    .setUrl("new-url");
-            assertEquals(PasswordOperationResults.SUCCESS, passwordService.updatePassword(password.getId(),newPass));
+            Mockito.doReturn(true)
+                    .when(repository)
+                    .isPasswordExists("id");
 
-            Password fromDb = repository.findById(password.getId());
+
+            Mockito.doReturn(password)
+                    .when(repository)
+                    .findById("id");
+
+            assertEquals(PasswordOperationResults.SUCCESS, passwordService.updatePassword("id", password));
+
+            Password fromDb = repository.findById("id");
             assumeTrue(password.equals(fromDb));
-
-
         }
 
     }
@@ -109,42 +134,63 @@ class PasswordServiceTest {
 
     @DisplayName("Delete Password")
     @Test
-    void deletePassword(){
-        passwordService.savePassword(password);
+    void deletePassword() {
         passwordService.deletePassword(password.getId());
-
         assertNull(repository.findById(password.getId()));
     }
 
     @Nested
-    class GetPassword{
+    class GetPassword {
 
-        @BeforeEach
-        void savePassword(){
-            passwordService.savePassword(password);
+        @DisplayName("Non-saved Password")
+        @Test
+        void nonSavedPassword() {
+            Mockito.doReturn(false)
+                    .when(repository)
+                    .isPasswordExists("id");
+
+            assertNull(passwordService.getPasswordById("id", true));
         }
+
         @DisplayName("Reveal true")
         @Test
-        void revealTrue(){
-            Password fromService = passwordService.getPasswordById(password.getId(),true);
-            assertEquals(password.getPassword(),fromService.getPassword());
+        void revealTrue() {
+            Mockito.doReturn(true)
+                    .when(repository)
+                    .isPasswordExists("id");
+
+            Mockito.doReturn(password)
+                    .when(repository)
+                    .findById("id");
+
+            Password fromService = passwordService.getPasswordById("id", true);
+            assertEquals(password.getPassword(), fromService.getPassword());
         }
 
         @DisplayName("Reveal false")
         @Test
-        void revealFalse(){
-            Password fromService = passwordService.getPasswordById(password.getId(),false);
-            assertNotEquals(password.getPassword(),fromService.getPassword());
-            assertEquals(password.getPassword().length(),fromService.getPassword().length());
+        void revealFalse() {
+            Mockito.doReturn(true)
+                    .when(repository)
+                    .isPasswordExists("id");
+
+            Mockito.doReturn(password)
+                    .when(repository)
+                    .findById("id");
+
+            Password fromService = passwordService.getPasswordById("id", false);
+            assertNotEquals(password.getPassword(), fromService.getPassword());
+            assertEquals(password.getPassword().length(), fromService.getPassword().length());
         }
     }
 
 
     @Nested
-    class GeneratePassword{
+    class GeneratePassword {
         private GeneratedPassword generatedPassword;
+
         @BeforeEach
-        void setUp(){
+        void setUp() {
             generatedPassword = new GeneratedPassword()
                     .setHasLowerCaseCharacters(true)
                     .setHasNumericCharacters(true)
@@ -154,7 +200,7 @@ class PasswordServiceTest {
 
         @Test
         @DisplayName("No id")
-        void noId(){
+        void noId() {
             passwordService.generatePassword(generatedPassword);
             assertNotNull(generatedPassword.getPassword());
         }
@@ -162,53 +208,62 @@ class PasswordServiceTest {
 
         @Test
         @DisplayName("With id")
-        void withId(){
-            passwordService.savePassword(password);
-            passwordService.generatePassword(password.getId(),generatedPassword);
+        void withId() {
+            Mockito.doReturn(true)
+                    .when(repository)
+                    .isPasswordExists("id");
+
+            Mockito.doReturn(password)
+                    .when(repository)
+                    .findById("id");
+
+            assertEquals(PasswordOperationResults.SUCCESS, passwordService.generatePassword("id", generatedPassword));
             assertNotNull(password.getPassword());
-            assertEquals(password.getPassword(),generatedPassword.getPassword());
+            assertEquals(password.getPassword(), generatedPassword.getPassword());
         }
 
     }
 
+    @Nested
+    class ListPasswords{
 
-    static class Repository implements PasswordRepository {
-        Map<String, Password> passwordList = new ConcurrentHashMap<>();
+        List<Password> passwordList;
+        List<Password> pList;
+        @BeforeEach
+        void setUp(){
+            passwordList = new ArrayList<>();
+            passwordList.add(password);
 
-        @Override
-        public void save(Password password) {
-            passwordList.put(password.getId(), password);
+            Mockito.doReturn(passwordList)
+                    .when(repository)
+                    .list();
+
+            pList = passwordService.listPassword();
         }
 
-        @Override
-        public void deleteById(String id) {
-            passwordList.remove(id);
-        }
-
-        @Override
-        public List<Password> list() {
-            return passwordList.values().stream().toList();
-        }
-
-        @Override
-        public Password findById(String id) {
-            return passwordList.get(id);
-        }
-
-        @Override
-        public Boolean isPasswordTitleExist(String title) {
-            List<Password> passwords = passwordList.values().stream().toList();
-            for (Password pass : passwords) {
-                if (pass.getTitle().equals(title)) {
-                    return true;
-                }
+        @DisplayName("Is password field hided")
+        @Test
+        void isPasswordFieldHided(){
+            for (Password p: pList) {
+                assertTrue(p.getPassword().contains("*"));
             }
-            return false;
+        }
+        @DisplayName("List Password")
+        @Test
+        void list(){
+            assertNotNull(pList);
         }
 
-        @Override
-        public Boolean isPasswordExists(String id) {
-            return passwordList.containsKey(id);
+        @DisplayName("Filter by directory")
+        @Test
+        void listByDirectory(){
+            pList = passwordService.listPasswordByDirectory("directory");
+            assertNotNull(pList);
+            pList = passwordService.listPasswordByDirectory("nullDirectory");
+            assertNull(pList);
         }
+
+
     }
+
 }
