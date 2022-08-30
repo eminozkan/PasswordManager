@@ -99,10 +99,7 @@ class PasswordServiceTest {
 
             Password fromDb = repository.findById(password.getId());
             assumeTrue(password.equals(fromDb));
-
-
         }
-
     }
 
     static class InMemoryDb implements PasswordRepository {

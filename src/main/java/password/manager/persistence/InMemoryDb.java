@@ -4,10 +4,11 @@ import org.springframework.stereotype.Repository;
 import password.manager.business.password.Password;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class InMemoryDb implements PasswordRepository{
-    private final Map<String, Password> passwords = new HashMap<>();
+    private final Map<String, Password> passwords = new ConcurrentHashMap<>();
 
     @Override
     public void save(Password password){
@@ -20,7 +21,11 @@ public class InMemoryDb implements PasswordRepository{
 
     @Override
     public List<Password> list(){
-        return passwords.values().stream().toList();
+        List<Password> passwordList = new ArrayList<>();
+        for (Password pass:passwords.values().stream().toList()) {
+            passwordList.add(new Password(pass));
+        }
+        return passwordList;
     }
 
     @Override
