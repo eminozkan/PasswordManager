@@ -1,6 +1,6 @@
 package password.manager.business.password;
 
-public class GeneratedPassword {
+public class PasswordGenerationOptions {
 
     private int length;
 
@@ -20,7 +20,7 @@ public class GeneratedPassword {
         return length;
     }
 
-    public GeneratedPassword setLength(int length) {
+    public PasswordGenerationOptions setLength(int length) {
         this.length = length;
         return this;
     }
@@ -29,7 +29,7 @@ public class GeneratedPassword {
         return password;
     }
 
-    public GeneratedPassword setPassword(String password) {
+    public PasswordGenerationOptions setPassword(String password) {
         this.password = password;
         return this;
     }
@@ -38,7 +38,7 @@ public class GeneratedPassword {
         return passwordId;
     }
 
-    public GeneratedPassword setPasswordId(String passwordId) {
+    public PasswordGenerationOptions setPasswordId(String passwordId) {
         this.passwordId = passwordId;
         return this;
     }
@@ -47,7 +47,7 @@ public class GeneratedPassword {
         return hasSpecialCharacters;
     }
 
-    public GeneratedPassword setHasSpecialCharacters(boolean hasSpecialCharacters) {
+    public PasswordGenerationOptions setHasSpecialCharacters(boolean hasSpecialCharacters) {
         this.hasSpecialCharacters = hasSpecialCharacters;
         return this;
     }
@@ -56,7 +56,7 @@ public class GeneratedPassword {
         return hasNumericCharacters;
     }
 
-    public GeneratedPassword setHasNumericCharacters(boolean hasNumericCharacters) {
+    public PasswordGenerationOptions setHasNumericCharacters(boolean hasNumericCharacters) {
         this.hasNumericCharacters = hasNumericCharacters;
         return this;
     }
@@ -65,7 +65,7 @@ public class GeneratedPassword {
         return hasUpperCaseCharacters;
     }
 
-    public GeneratedPassword setHasUpperCaseCharacters(boolean hasUpperCaseCharacters) {
+    public PasswordGenerationOptions setHasUpperCaseCharacters(boolean hasUpperCaseCharacters) {
         this.hasUpperCaseCharacters = hasUpperCaseCharacters;
         return this;
     }
@@ -74,7 +74,7 @@ public class GeneratedPassword {
         return hasLowerCaseCharacters;
     }
 
-    public GeneratedPassword setHasLowerCaseCharacters(boolean hasLowerCaseCharacters) {
+    public PasswordGenerationOptions setHasLowerCaseCharacters(boolean hasLowerCaseCharacters) {
         this.hasLowerCaseCharacters = hasLowerCaseCharacters;
         return this;
     }

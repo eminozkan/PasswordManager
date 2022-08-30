@@ -2,7 +2,7 @@ package password.manager.business;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import password.manager.business.password.GeneratedPassword;
+import password.manager.business.password.PasswordGenerationOptions;
 import password.manager.business.password.Password;
 import password.manager.business.password.PasswordGenerator;
 import password.manager.business.results.PasswordOperationResults;
@@ -107,6 +107,7 @@ public class DefaultPasswordService implements PasswordService {
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
         Password oldPass = repo.findById(id);
+
         boolean arePasswordsTitleSame =  oldPass.getTitle().equals(newPass.getTitle());
         if(!arePasswordsTitleSame && repo.isPasswordTitleExist(newPass.getTitle())){
             return PasswordOperationResults.TITLE_EXISTS;
@@ -134,7 +135,7 @@ public class DefaultPasswordService implements PasswordService {
     }
 
     @Override
-    public PasswordOperationResults generatePassword(String id, GeneratedPassword password){
+    public PasswordOperationResults generatePassword(String id, PasswordGenerationOptions password){
         if(!repo.isPasswordExists(id)){
             return PasswordOperationResults.PASSWORD_NOT_EXISTS;
         }
@@ -147,7 +148,7 @@ public class DefaultPasswordService implements PasswordService {
     }
 
     @Override
-    public GeneratedPassword generatePassword(GeneratedPassword password){
+    public PasswordGenerationOptions generatePassword(PasswordGenerationOptions password){
         PasswordGenerator generator = new PasswordGenerator();
         return generator.generatePassword(password);
     }

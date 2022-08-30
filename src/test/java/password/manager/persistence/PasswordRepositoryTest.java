@@ -25,7 +25,7 @@ class PasswordRepositoryTest {
                 .setNotes("notes")
                 .setUrl("url");
 
-        repository = new password.manager.persistence.InMemoryDb();
+        repository = new InMemoryPasswordRepository();
         repository.save(password);
 
     }

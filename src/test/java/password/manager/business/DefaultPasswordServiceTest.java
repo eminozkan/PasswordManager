@@ -1,14 +1,17 @@
 package password.manager.business;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import password.manager.business.password.GeneratedPassword;
+import password.manager.business.password.PasswordGenerationOptions;
 import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
 import password.manager.persistence.PasswordRepository;
@@ -20,13 +23,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 
 @ExtendWith(MockitoExtension.class)
-class PasswordServiceTest {
+class DefaultPasswordServiceTest {
 
     @Mock
     private PasswordRepository repository;
-    private PasswordService passwordService;
-    private Password password;
 
+    @Captor
+    private ArgumentCaptor<Password> captor;
+
+    private DefaultPasswordService passwordService;
+    private Password password;
 
     @BeforeEach
     void setUp() {
@@ -47,8 +53,8 @@ class PasswordServiceTest {
         @Test
         void noTitle() {
             password.setTitle("");
-            passwordService.savePassword(password);
             assertEquals(PasswordOperationResults.TITLE_IS_NULL, passwordService.savePassword(password));
+            Mockito.verifyNoInteractions(repository);
         }
 
         @DisplayName("Non-unique Title")
@@ -59,19 +65,28 @@ class PasswordServiceTest {
                     .isPasswordTitleExist(password.getTitle());
 
             assertEquals(PasswordOperationResults.TITLE_EXISTS, passwordService.savePassword(password));
+            Mockito.verifyNoMoreInteractions(repository);
+//            Mockito.verify(repository, Mockito.never()).save(Mockito.any());
         }
 
+        //TODO
         @DisplayName("Success")
         @Test
         void success() {
-            Mockito.doNothing()
+            Mockito.doReturn(false)
                     .when(repository)
-                    .save(password);
+                    .isPasswordTitleExist(password.getTitle());
             assertEquals(PasswordOperationResults.SUCCESS, passwordService.savePassword(password));
-            assertNotNull(password.getId());
+            Assertions.assertThat(password.getId()).isNotNull().isNotBlank();
+//            Assertions.assertThat(password.getId()).isNotBlank();
+//            assertNotNull(password.getId());
+            Mockito.verify(repository).save(captor.capture());
+            final Password savedPassword = captor.getValue();
+            assertNotNull(savedPassword.getId());
+            assertEquals(password.getTitle(), savedPassword.getTitle());
+            //....
         }
     }
-
 
     @Nested
     class UpdatePassword {
@@ -109,6 +124,7 @@ class PasswordServiceTest {
             assertEquals(PasswordOperationResults.TITLE_EXISTS, passwordService.updatePassword("id", newPass));
         }
 
+        //TODO
         @DisplayName("Success")
         @Test
         void success() {
@@ -130,11 +146,12 @@ class PasswordServiceTest {
     }
 
 
+    //TODO
     @DisplayName("Delete Password")
     @Test
     void deletePassword() {
-        passwordService.deletePassword(password.getId());
-        assertNull(repository.findById(password.getId()));
+        passwordService.deletePassword("id");
+        Mockito.verify(repository).deleteById("id");
     }
 
     @Nested
@@ -185,11 +202,11 @@ class PasswordServiceTest {
 
     @Nested
     class GeneratePassword {
-        private GeneratedPassword generatedPassword;
+        private PasswordGenerationOptions options;
 
         @BeforeEach
         void setUp() {
-            generatedPassword = new GeneratedPassword()
+            options = new PasswordGenerationOptions()
                     .setHasLowerCaseCharacters(true)
                     .setHasNumericCharacters(true)
                     .setHasSpecialCharacters(true)
@@ -199,8 +216,8 @@ class PasswordServiceTest {
         @Test
         @DisplayName("No id")
         void noId() {
-            passwordService.generatePassword(generatedPassword);
-            assertNotNull(generatedPassword.getPassword());
+            passwordService.generatePassword(options);
+            assertNotNull(options.getPassword());
         }
 
 
@@ -215,20 +232,21 @@ class PasswordServiceTest {
                     .when(repository)
                     .findById("id");
 
-            assertEquals(PasswordOperationResults.SUCCESS, passwordService.generatePassword("id", generatedPassword));
+            assertEquals(PasswordOperationResults.SUCCESS, passwordService.generatePassword("id", options));
             assertNotNull(password.getPassword());
-            assertEquals(password.getPassword(), generatedPassword.getPassword());
+            assertEquals(password.getPassword(), options.getPassword());
         }
 
     }
 
     @Nested
-    class ListPasswords{
+    class ListPasswords {
 
         List<Password> passwordList;
         List<Password> pList;
+
         @BeforeEach
-        void setUp(){
+        void setUp() {
             passwordList = new ArrayList<>();
             passwordList.add(password);
 
@@ -241,27 +259,30 @@ class PasswordServiceTest {
 
         @DisplayName("Is password field hided")
         @Test
-        void isPasswordFieldHided(){
-            for (Password p: pList) {
+        void isPasswordFieldHided() {
+            for (Password p : pList) {
                 assertTrue(p.getPassword().contains("*"));
             }
         }
+
         @DisplayName("List Password")
         @Test
-        void list(){
+        void list() {
             assertNotNull(pList);
         }
 
         @DisplayName("Filter by directory")
         @Test
-        void listByDirectory(){
+        void listByDirectory() {
             pList = passwordService.listPasswordByDirectory("directory");
             assertNotNull(pList);
             pList = passwordService.listPasswordByDirectory("nullDirectory");
             assertTrue(pList.isEmpty());
+            Assertions.assertThat(pList).isEmpty();
+//            Assertions.assertThat(pList).contains(password);
+//            Assertions.assertThat(pList).hasSize(3);
+
         }
-
-
     }
 
 }
