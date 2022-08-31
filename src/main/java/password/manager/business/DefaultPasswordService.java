@@ -5,6 +5,7 @@ import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
 import password.manager.persistence.PasswordRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -96,14 +97,34 @@ public class DefaultPasswordService implements PasswordService {
         passwordRepository.deleteById(id);
     }
 
+    private List<Password> hidePasswordFields(List<Password> passwordList){
+        List<Password> passwords = new ArrayList<>();
+
+        for(Password p : passwordList){
+            String hiddenPassword = "*".repeat(p.getPassword().length());
+            Password pass = new Password(p);
+            pass.setPassword(hiddenPassword);
+            passwords.add(pass);
+        }
+
+        return passwords;
+    }
+
     @Override
     public List<Password> listPassword() {
-        return null;
+        return hidePasswordFields(passwordRepository.list());
     }
 
     @Override
     public List<Password> listPasswordByDirectory(String directoryName) {
-        return null;
+        List<Password> passwords = passwordRepository.list();
+        List<Password> filteredPasswords = new ArrayList<>();
+        for(Password p : passwords){
+            if(p.getDirectoryName().equals(directoryName)){
+                filteredPasswords.add(p);
+            }
+        }
+        return hidePasswordFields(filteredPasswords);
     }
 
     @Override

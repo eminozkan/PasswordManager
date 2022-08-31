@@ -10,6 +10,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import password.manager.business.password.Password;
 import password.manager.persistence.PasswordRepository;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 import static password.manager.business.results.PasswordOperationResults.*;
 
@@ -60,8 +62,6 @@ public class DefaultPasswordServiceTest {
             assertThat(capturedPassword.getPassword()).isEqualTo(password.getPassword());
             assertThat(capturedPassword.getUrl()).isEqualTo(password.getUrl());
             assertThat(capturedPassword.getNotes()).isEqualTo(password.getNotes());
-
-            System.out.println("Save password test finished successfully");
         }
 
         @DisplayName("No title")
@@ -190,4 +190,80 @@ public class DefaultPasswordServiceTest {
         Mockito.verifyNoMoreInteractions(repository);
     }
 
+    @Nested
+    class ListPassword{
+        Password password;
+        Password password2;
+        @BeforeEach
+        void setUp() {
+            password = new Password()
+                    .setTitle("title")
+                    .setDirectoryName("directory")
+                    .setUsername("username")
+                    .setPassword("password")
+                    .setNotes("notes")
+                    .setUrl("url");
+
+            password2 = new Password()
+                    .setTitle("title2")
+                    .setDirectoryName("directory")
+                    .setUsername("username")
+                    .setPassword("password")
+                    .setNotes("notes")
+                    .setUrl("url");
+
+            Mockito.doReturn(List.of(password,password2))
+                    .when(repository)
+                    .list();
+        }
+
+        @DisplayName("Success")
+        @Test
+        void success(){
+            List<Password> passwordList = passwordService.listPassword();
+            assertThat(passwordList).isNotNull().isNotEmpty();
+            Mockito.verify(repository).list();
+            Mockito.verifyNoMoreInteractions(repository);
+        }
+
+        @DisplayName("Is password field hidden")
+        @Test
+        void isPasswordFieldHidden(){
+            List<Password> passwords = List.of(password,password2);
+
+            List<Password> passwordList = passwordService.listPassword();
+            assertThat(passwordList).isNotNull().isNotEmpty();
+            Mockito.verify(repository).list();
+            Mockito.verifyNoMoreInteractions(repository);
+
+            int index = 0;
+            for(Password p : passwordList){
+                assertThat(p.getPassword()).contains("*".repeat(passwords.get(index).getPassword().length()));
+                index++;
+            }
+        }
+
+        @DisplayName("By directory has no Passwords")
+        @Test
+        void byDirectoryHasNoPasswords(){
+            assertThat(passwordService.listPasswordByDirectory("hasNoPassword")).isNotNull().isEmpty();
+            Mockito.verify(repository).list();
+            Mockito.verifyNoMoreInteractions(repository);
+        }
+
+        @DisplayName("By Directory")
+        @Test
+        void byDirectory(){
+            List<Password> passwordList = passwordService.listPasswordByDirectory("directory");
+
+            assertThat(passwordList).isNotNull().isNotEmpty();
+            Mockito.verify(repository).list();
+            Mockito.verifyNoMoreInteractions(repository);
+
+            for(Password p : passwordList){
+                assertThat(p.getDirectoryName()).isEqualTo("directory");
+            }
+        }
+
+    }
 }
