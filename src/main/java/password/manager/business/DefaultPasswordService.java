@@ -14,16 +14,16 @@ import static password.manager.business.results.PasswordOperationResults.*;
 public class DefaultPasswordService implements PasswordService {
     private final PasswordRepository passwordRepository;
 
-    public DefaultPasswordService(PasswordRepository repository){
+    public DefaultPasswordService(PasswordRepository repository) {
         this.passwordRepository = repository;
     }
 
     @Override
     public PasswordOperationResults savePassword(Password password) {
-        if(ObjectUtils.isEmpty(password.getTitle())) {
+        if (ObjectUtils.isEmpty(password.getTitle())) {
             return TITLE_IS_NULL;
         }
-        if(passwordRepository.isPasswordTitleExist(password.getTitle())){
+        if (passwordRepository.isPasswordTitleExist(password.getTitle())) {
             return TITLE_EXISTS;
         }
 
@@ -34,42 +34,42 @@ public class DefaultPasswordService implements PasswordService {
 
 
     //TODO not sure for method name
-    private Password createUpdatedPassword(Password oldPass, Password newPass){
+    private Password createUpdatedPassword(Password oldPass, Password newPass) {
         Password updatedPassword = new Password();
 
-        if(!ObjectUtils.isEmpty(newPass.getTitle())){
+        if (!ObjectUtils.isEmpty(newPass.getTitle())) {
             updatedPassword.setTitle(newPass.getTitle());
-        }else{
+        } else {
             updatedPassword.setTitle(oldPass.getTitle());
         }
 
-        if(!ObjectUtils.isEmpty(newPass.getDirectoryName())){
+        if (!ObjectUtils.isEmpty(newPass.getDirectoryName())) {
             updatedPassword.setDirectoryName(newPass.getDirectoryName());
-        }else{
+        } else {
             updatedPassword.setDirectoryName(oldPass.getDirectoryName());
         }
 
-        if(!ObjectUtils.isEmpty(newPass.getUsername())){
+        if (!ObjectUtils.isEmpty(newPass.getUsername())) {
             updatedPassword.setUsername(newPass.getUsername());
-        }else{
+        } else {
             updatedPassword.setUsername(oldPass.getUsername());
         }
 
-        if(!ObjectUtils.isEmpty(newPass.getPassword())){
+        if (!ObjectUtils.isEmpty(newPass.getPassword())) {
             updatedPassword.setPassword(newPass.getPassword());
-        }else{
+        } else {
             updatedPassword.setPassword(oldPass.getPassword());
         }
 
-        if(!ObjectUtils.isEmpty(newPass.getNotes())){
+        if (!ObjectUtils.isEmpty(newPass.getNotes())) {
             updatedPassword.setNotes(newPass.getNotes());
-        }else{
+        } else {
             updatedPassword.setNotes(oldPass.getNotes());
         }
 
-        if(!ObjectUtils.isEmpty(newPass.getUrl())){
+        if (!ObjectUtils.isEmpty(newPass.getUrl())) {
             updatedPassword.setUrl(newPass.getUrl());
-        }else{
+        } else {
             updatedPassword.setUrl(oldPass.getUrl());
         }
 
@@ -79,14 +79,14 @@ public class DefaultPasswordService implements PasswordService {
     @Override
     public PasswordOperationResults updatePassword(String id, Password newPassword) {
         Password oldPassword = passwordRepository.findById(id);
-        if(oldPassword == null){
+        if (oldPassword == null) {
             return PASSWORD_NOT_EXISTS;
         }
         boolean arePasswordsTitleSame = oldPassword.getTitle().equals(newPassword.getTitle());
-        if(!arePasswordsTitleSame && passwordRepository.isPasswordTitleExist(newPassword.getTitle())){
+        if (!arePasswordsTitleSame && passwordRepository.isPasswordTitleExist(newPassword.getTitle())) {
             return TITLE_EXISTS;
         }
-        Password updatedPassword = createUpdatedPassword(oldPassword,newPassword);
+        Password updatedPassword = createUpdatedPassword(oldPassword, newPassword);
         updatedPassword.setId(id);
         passwordRepository.update(updatedPassword);
         return SUCCESS;
@@ -97,16 +97,12 @@ public class DefaultPasswordService implements PasswordService {
         passwordRepository.deleteById(id);
     }
 
-    private List<Password> hidePasswordFields(List<Password> passwordList){
+    private List<Password> hidePasswordFields(List<Password> passwordList) {
         List<Password> passwords = new ArrayList<>();
-
-        for(Password p : passwordList){
-            String hiddenPassword = "*".repeat(p.getPassword().length());
+        for (Password p : passwordList) {
             Password pass = new Password(p);
-            pass.setPassword(hiddenPassword);
-            passwords.add(pass);
+            passwords.add(hidePasswordField(pass));
         }
-
         return passwords;
     }
 
@@ -119,16 +115,35 @@ public class DefaultPasswordService implements PasswordService {
     public List<Password> listPasswordByDirectory(String directoryName) {
         List<Password> passwords = passwordRepository.list();
         List<Password> filteredPasswords = new ArrayList<>();
-        for(Password p : passwords){
-            if(p.getDirectoryName().equals(directoryName)){
+        for (Password p : passwords) {
+            if (p.getDirectoryName().equals(directoryName)) {
                 filteredPasswords.add(p);
             }
         }
         return hidePasswordFields(filteredPasswords);
     }
 
+    private Password hidePasswordField(Password pass) {
+        Password password = new Password(pass);
+        password.setPassword("*".repeat(pass.getPassword().length()));
+        return password;
+    }
+
     @Override
-    public Password getPasswordById(String id, Boolean reveal) {
-        return null;
+    public Password getPasswordById(String id, Boolean reveal) throws PasswordException {
+        Password fromDb = passwordRepository.findById(id);
+        if (fromDb == null) {
+            throw new PasswordException("Password not exist");
+        }
+        if (reveal) {
+            return fromDb;
+        }
+        return hidePasswordField(fromDb);
+    }
+
+    public static class PasswordException extends Exception {
+        public PasswordException(String msg) {
+            super(msg);
+        }
     }
 }

@@ -16,6 +16,6 @@ public interface PasswordService {
 
     void deletePassword(String id);
 
-    Password getPasswordById(String id, Boolean reveal);
+    Password getPasswordById(String id, Boolean reveal) throws DefaultPasswordService.PasswordException;
 
 }
