@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-public class InMemoryDb implements PasswordRepository{
+public class InMemoryPasswordRepository implements PasswordRepository{
     private final Map<String, Password> passwords = new ConcurrentHashMap<>();
 
     @Override

@@ -1,6 +1,5 @@
 package password.manager.business;
 
-import password.manager.business.password.GeneratedPassword;
 import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
 
@@ -19,5 +18,4 @@ public interface PasswordService {
 
     Password getPasswordById(String id, Boolean reveal);
 
-    PasswordOperationResults generatePassword(String id, GeneratedPassword password);
 }
