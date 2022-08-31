@@ -31,6 +31,8 @@ public class DefaultPasswordService implements PasswordService {
         return SUCCESS;
     }
 
+
+    //TODO not sure for method name
     private Password createUpdatedPassword(Password oldPass, Password newPass){
         Password updatedPassword = new Password();
 
@@ -90,6 +92,11 @@ public class DefaultPasswordService implements PasswordService {
     }
 
     @Override
+    public void deletePassword(String id) {
+        passwordRepository.deleteById(id);
+    }
+
+    @Override
     public List<Password> listPassword() {
         return null;
     }
@@ -97,11 +104,6 @@ public class DefaultPasswordService implements PasswordService {
     @Override
     public List<Password> listPasswordByDirectory(String directoryName) {
         return null;
-    }
-
-    @Override
-    public void deletePassword(String id) {
-
     }
 
     @Override

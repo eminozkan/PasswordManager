@@ -1,8 +1,6 @@
 package password.manager.business;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -45,6 +43,7 @@ public class DefaultPasswordServiceTest {
                     .setUrl("url");
         }
 
+        @DisplayName("Success")
         @Test
         void success() {
             assertThat(SUCCESS).isEqualTo(passwordService.savePassword(password));
@@ -61,8 +60,11 @@ public class DefaultPasswordServiceTest {
             assertThat(capturedPassword.getPassword()).isEqualTo(password.getPassword());
             assertThat(capturedPassword.getUrl()).isEqualTo(password.getUrl());
             assertThat(capturedPassword.getNotes()).isEqualTo(password.getNotes());
+
+            System.out.println("Save password test finished successfully");
         }
 
+        @DisplayName("No title")
         @Test
         void noTitle() {
             password.setTitle("");
@@ -70,6 +72,7 @@ public class DefaultPasswordServiceTest {
             Mockito.verifyNoInteractions(repository);
         }
 
+        @DisplayName("Not Unique Title")
         @Test
         void notUniqueTitle() {
             password.setTitle("not-unique-title");
@@ -97,6 +100,8 @@ public class DefaultPasswordServiceTest {
                     .setNotes("notes")
                     .setUrl("url");
         }
+
+        @DisplayName("Doesnt Exist Password")
         @Test
         void doesntExist() {
             Mockito.doReturn(null)
@@ -107,6 +112,7 @@ public class DefaultPasswordServiceTest {
             Mockito.verifyNoMoreInteractions(repository);
         }
 
+        @DisplayName("Not Unique Title")
         @Test
         void notUniqueTitle() {
 
@@ -126,6 +132,7 @@ public class DefaultPasswordServiceTest {
             Mockito.verify(repository).isPasswordTitleExist("not-unique-title");
         }
 
+        @DisplayName("Success")
         @Test
         void success() {
             Password newPassword = new Password()
@@ -153,6 +160,7 @@ public class DefaultPasswordServiceTest {
             assertThat(capturedPassword.getUrl()).isEqualTo(newPassword.getUrl());
         }
 
+        @DisplayName("Same Title")
         @Test
         void sameTitle() {
             Password newPassword = new Password()
@@ -173,4 +181,13 @@ public class DefaultPasswordServiceTest {
             Mockito.verifyNoMoreInteractions(repository);
         }
     }
+
+    @DisplayName("Delete password by id")
+    @Test
+    void deletePasswordById(){
+        passwordService.deletePassword("id");
+        Mockito.verify(repository).deleteById("id");
+        Mockito.verifyNoMoreInteractions(repository);
+    }
+
 }
