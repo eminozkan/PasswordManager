@@ -8,6 +8,8 @@ public interface PasswordRepository {
 
     void save(Password password);
 
+    void update(Password password);
+
     void deleteById(String id);
 
     List<Password> list();

@@ -20,6 +20,11 @@ public class InMemoryPasswordRepository implements PasswordRepository{
     }
 
     @Override
+    public void update(Password password){
+        passwords.put(password.getId(),password);
+    }
+
+    @Override
     public List<Password> list(){
         List<Password> passwordList = new ArrayList<>();
         for (Password pass:passwords.values().stream().toList()) {
