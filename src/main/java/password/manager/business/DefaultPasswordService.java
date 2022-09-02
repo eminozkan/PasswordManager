@@ -33,10 +33,7 @@ public class DefaultPasswordService implements PasswordService {
         passwordRepository.save(password);
         return SUCCESS;
     }
-
-
-    //TODO not sure for method name
-    private Password createUpdatedPassword(Password oldPass, Password newPass) {
+    private Password mergePasswordsToCreateUpdatedPassword(Password oldPass, Password newPass) {
         Password updatedPassword = new Password();
 
         if (!ObjectUtils.isEmpty(newPass.getTitle())) {
@@ -88,7 +85,7 @@ public class DefaultPasswordService implements PasswordService {
         if (!arePasswordsTitleSame && passwordRepository.isPasswordTitleExist(newPassword.getTitle())) {
             return TITLE_EXISTS;
         }
-        Password updatedPassword = createUpdatedPassword(oldPassword, newPassword);
+        Password updatedPassword = mergePasswordsToCreateUpdatedPassword(oldPassword, newPassword);
         updatedPassword.setId(id);
         passwordRepository.update(updatedPassword);
         return SUCCESS;
