@@ -1,5 +1,6 @@
 package password.manager.business;
 
+import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import password.manager.business.password.Password;
 import password.manager.business.results.PasswordOperationResults;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 import static password.manager.business.results.PasswordOperationResults.*;
 
+@Service
 public class DefaultPasswordService implements PasswordService {
     private final PasswordRepository passwordRepository;
 
